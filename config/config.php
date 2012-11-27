@@ -14,3 +14,4 @@
 
 // define hook
 $GLOBALS['TL_HOOKS']['parseTemplate'][] = array('BackendImprovedTheme', 'onParseTemplate');
+$GLOBALS['SETUP_EXT_HOOK']['be_improved_theme'][] = array('BackendImprovedTheme', 'onParseTemplate');
