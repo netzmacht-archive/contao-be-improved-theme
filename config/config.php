@@ -12,5 +12,5 @@
  *  
  **/
 
-// load assets
+// define hook
 $GLOBALS['TL_HOOKS']['parseTemplate'][] = array('BackendImprovedTheme', 'onParseTemplate');
