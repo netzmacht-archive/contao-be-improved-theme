@@ -24,9 +24,10 @@ class BackendImprovedTheme extends Backend
 	/**
 	 * add stylesheet or javascript to the template depending on settings
 	 */
-	public function onParseTemplate ($objTemplate)
+	public function onParseTemplate (&$objTemplate)
 	{
-		if(TL_MODE != 'BE') 
+		
+		if(TL_MODE != 'BE' || !in_array($objTemplate->getName(), $GLOBALS['useBackendImrovedOnTemplates'])) 
 		{
 			return;
 		}
@@ -34,9 +35,9 @@ class BackendImprovedTheme extends Backend
 		$this->import('BackendUser', 'User');
 		
 		if($GLOBALS['TL_CONFIG']['forceImprovedTheme'] || $GLOBALS['TL_CONFIG']['requireImprovedTheme'] || $this->User->useImprovedTheme)
-		{			
-			$objTemplate->javascripts .= '<scipt src="system/modules/be_improved_theme/assets/script.js"></script>';
-			$objTemplate->stylesheets .= '<link rel="stylesheet" href="system/modules/be_improved_theme/assets/style.css">';
+		{	
+			$objTemplate->javascripts .= '<script src="system/modules/be_improved_theme/assets/script.js"></script>' . "\r\n";
+			$objTemplate->stylesheets .= '<link rel="stylesheet" href="system/modules/be_improved_theme/assets/style.css">' . "\r\n";
 		}
 	}
 
