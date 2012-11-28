@@ -33,7 +33,8 @@ ul.level_1 .tl_left {
 .tl_listing td.tl_right_nowrap a, 
 .tl_content_header a,
 .tl_content_right a,
-.tl_content a {
+.tl_content a,
+.tl_listing li > .tl_right i.icon-disabled {
 	opacity: 0.2;
 	background: #fff;
 	border: 1px solid #E9E9E9;
@@ -96,4 +97,11 @@ ul.level_1 .tl_left {
 
 #tl_navigation .tl_level_2 > li {
 	padding: 0 0 0px 24px!important;
+}
+
+/* font icon supprt */
+.icon-disabled {
+	padding: 6px 3px 3px 3px;
+	width: 17px!important;
+	height: 14px;
 }
