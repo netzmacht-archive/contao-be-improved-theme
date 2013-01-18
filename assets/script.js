@@ -261,21 +261,10 @@ document.addEvent('domready', function()
 
 	// init listing 
 	var listing = new BackendRowWidget('.tl_listing li.tl_file, .tl_listing tr', '.tl_right a, .tl_right_nowrap a');
-
-	// define common condition set which will be used for tl_content and tl_header as well
-	conditions = new Array();
-	conditions.push(listing.createCondition('test', 'href', 'act', true));
-	conditions.push(listing.createCondition('test', 'href', 'act=edit&', false));
-
-	listing.addCondition('test', 'href', 'act=delete&', true); // prevent delete link is called
-	listing.addCondition(conditions, 'or');
 	listing.init();
-
-
+	
 	// init file manager folder toggling 
 	var folder = new BackendRowWidget('.tl_listing li.tl_folder', 'a');
-	folder.addCondition('value', 'onclick', null, true);
-	folder.addCondition('test', 'href', 'do=files', false);
 	folder.init();
 
 
@@ -288,14 +277,10 @@ document.addEvent('domready', function()
 
 	// init tl_content
 	var content = new BackendRowWidget('.tl_content', '.tl_content_right a');
-	content.addCondition(conditions, 'or');
 	content.init();
 
-	
 	// init tl_header
 	var header = new BackendRowWidget('.tl_header', '.tl_content_right a');
-	header.addCondition('test', 'href', 'act=delete&', true); // prevent delete link is called
-	header.addCondition(conditions, 'or');
 	header.init();
 
 

@@ -26,6 +26,11 @@ class BackendImprovedTheme extends Backend
 	 */
 	protected $arrConfig;
 	
+	/*
+	 * 
+	 */
+	protected static $arrCallbacks = array();
+	
 	
 	/**
 	 * 
@@ -58,15 +63,58 @@ class BackendImprovedTheme extends Backend
 	/**
 	 * 
 	 */
+	public function onParseBackendTemplate($strContent, $strTemplate)
+	{
+		if(!in_array($strTemplate, $GLOBALS['TL_CONFIG']['useBackendImprovedOnTemplates']))
+		{
+			return $strContent;
+		}
+		
+		foreach (static::$arrCallbacks as $callback) 
+		{
+			if(is_string($callback))
+			{
+				$strContent = $this->$callback($strContent);
+			}
+			else
+			{
+				$this->import($callback[0]);
+				$strContent = $this->$callback[1]($strContent);
+			}			
+		}
+		
+		return $strContent;		
+	}
+	
+	
+	/**
+	 * 
+	 */
 	public function onLoadDataContainer($strTable)
 	{
 		if(!$this->useImprovedTheme())
 		{
 			return;
 		}
+		
+		// header callback
+		if(isset($GLOBALS['TL_DCA'][$strTable]['improved_theme']['header_callback']))
+		{
+			static::$arrCallbacks[] = $GLOBALS['TL_DCA'][$strTable]['improved_theme']['header_callback'];
+		}
+		elseif (in_array($GLOBALS['TL_DCA'][$strTable]['list']['sorting']['mode'], array(3,4,6)) && !in_array($strTable, $this->arrConfig['header_operation_blacklist'])) 
+		{
+			static::$arrCallbacks[] = 'callbackHeaderOperation';			
+		}
 
+		// row operation callback
+		if(isset($GLOBALS['TL_DCA'][$strTable]['improved_theme']['row_operation_callback']))
+		{
+			static::$arrCallbacks[] = $GLOBALS['TL_DCA'][$strTable]['improved_theme']['row_operation_callback'];
+		}
+		
 		// support configuration by the dca
-		if(isset($GLOBALS['TL_DCA'][$strTable]['config']['row_operation']))
+		if(isset($GLOBALS['TL_DCA'][$strTable]['improved_theme']['row_operation']))
 		{
 			$this->addRowOperationClass($strTable, $GLOBALS['TL_DCA'][$strTable]['config']['row_operation']);
 		}
@@ -103,7 +151,7 @@ class BackendImprovedTheme extends Backend
 		elseif(preg_match('/class\s*=/', $GLOBALS['TL_DCA'][$strTable]['list']['operations'][$strOperation]['attributes']))
 		{
 			$GLOBALS['TL_DCA'][$strTable]['list']['operations'][$strOperation]['attributes'] = preg_replace(
-				'/(class\s*=\s*(\'|"))/', '\1row_operation', $GLOBALS['TL_DCA'][$strTable]['list']['operations'][$strOperation]['attributes']
+				'/(class\s*=\s*(\'|"))/', '\1row_operation ', $GLOBALS['TL_DCA'][$strTable]['list']['operations'][$strOperation]['attributes']
 			);
 		}
 		
@@ -112,6 +160,24 @@ class BackendImprovedTheme extends Backend
 		{
 			$GLOBALS['TL_DCA'][$strTable]['list']['operations'][$strOperation]['attributes'] .= ' class="row_operation"';
 		}
+	}
+	
+	
+	/**
+	 * 
+	 */
+	protected function callbackFileTreeToggleIcon($strContent)
+	{
+		return preg_replace('/href="([^"]*)do=files&amp;tg([^"]*)"/', '\0 class="row_operation"', $strContent);
+	}
+
+	
+	/**
+	 * 
+	 */
+	protected function callbackHeaderOperation($strContent)
+	{
+		return preg_replace('/(<div\s*class="tl_header"(.*)<a\s*href="([^"]*)")/Us', '\0 class="row_operation"', $strContent, 1);
 	}
 	
 	

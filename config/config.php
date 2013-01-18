@@ -14,6 +14,7 @@
 
 // define hook
 $GLOBALS['TL_HOOKS']['parseTemplate'][] = array('BackendImprovedTheme', 'onParseTemplate');
+$GLOBALS['TL_HOOKS']['parseBackendTemplate'][] = array('BackendImprovedTheme', 'onParseBackendTemplate');
 $GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('BackendImprovedTheme', 'onLoadDataContainer');
 $GLOBALS['SETUP_EXT_HOOK']['be_improved_theme'][] = array('BackendImprovedTheme', 'onParseTemplate');
 
@@ -22,10 +23,6 @@ $GLOBALS['TL_CONFIG']['useBackendImprovedOnTemplates'] = array('be_main', 'be_fi
 
 $GLOBALS['TL_CONFIG']['backendImprovedConfig'] = array
 (
-	'row_peration' => array
-	(
-		'__default__'	=> 'edit',
-		'__fallback__'	=> 'show',
-		//'tl_content'	=> 'delete',
-	),
+	'row_operation_blacklist' => array(),
+	'header_operation_blacklist' => array('tl_article', 'tl_news'),
 );
