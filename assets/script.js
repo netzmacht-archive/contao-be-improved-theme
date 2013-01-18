@@ -7,7 +7,8 @@
 function BackendRowWidget(row, sub)
 {
 	var self = this;
-	var row = $$(row);
+	var rowClass = row;
+	var row = $$(rowClass);
 	var sub = sub;
 	var element;
 	var conditions = new Array();
@@ -32,6 +33,20 @@ function BackendRowWidget(row, sub)
 			if(search === 0 && row.length > 3) {
 				toggleChildren(row);
 			}
+			
+			window.addEvent('ajax_change', function(e) {
+				// reassign row to fetch new elements
+				newRow = $$(rowClass);				
+				newRow.each(function(el) {
+					if(!row.contains(el)) {
+						toggleChildren(el);
+					}
+				});
+				
+				newRow.addEvent('click', function(e) {
+					toggleChildren(this, e);
+				});
+			});
 		}
 		else {
 			row.addEvent('click', findChildUrl);
