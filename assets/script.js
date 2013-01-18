@@ -253,7 +253,7 @@ document.addEvent('domready', function()
 {
 
 	// prevent toggling icon trigger other functions	
-	$$('.tl_listing li .tl_left > a, .tl_listing tr .tl_left > a, .tl_right_nowrap > a, .tl_right > a').addEvent('click', function(e) {
+	$$('.tl_listing li .tl_left > a, .tl_listing tr .tl_left > a, .tl_right_nowrap > a, .tl_right > a, .tl_content_right > a').addEvent('click', function(e) {
 		e.stopPropagation();
 	});
 
