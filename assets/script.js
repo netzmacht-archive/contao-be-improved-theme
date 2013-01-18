@@ -129,25 +129,12 @@ function BackendRowWidget(row, sub)
 
 	var findChildUrl = function()
 	{
-		var elements = this.getElements(sub);
-
-		for(var i=0; i< elements.length; i++) {
-			element = elements[i];
-
-			go = 0;
-
-			for (var j = 0; j < conditions.length; j++) {								
-				if (handleCondition(conditions[j])) {
-					go++;
-					break;
-				}								
-			}
-
-			if(go==0) {
-				window.location.href = element.getProperty('href');
-				return;
-			}
-		}				
+		var link = this.getElement('.row_operation');
+		
+		if(link)
+		{
+			window.location.href = link.getProperty('href');
+		}		
 	}
 
 
