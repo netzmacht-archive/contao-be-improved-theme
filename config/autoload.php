@@ -26,5 +26,5 @@ ClassLoader::addNamespaces(array
 ClassLoader::addClasses(array
 (
 	// Classes
-	'BackendImprovedTheme'		=> 'system/modules/be_improved_theme/classes/BackendImprovedTheme.php',
+	'BackendImprovedTheme'		=> 'system/modules/be_improved_theme/BackendImprovedTheme.php',
 ));
