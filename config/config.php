@@ -17,4 +17,4 @@ $GLOBALS['TL_HOOKS']['parseTemplate'][] = array('BackendImprovedTheme', 'onParse
 $GLOBALS['SETUP_EXT_HOOK']['be_improved_theme'][] = array('BackendImprovedTheme', 'onParseTemplate');
 
 // define templates on which improved theme will be used
-$GLOBALS['useBackendImrovedOnTemplates'] = array('be_main', 'be_files', 'be_picker');
+$GLOBALS['useBackendImprovedOnTemplates'] = array('be_main', 'be_files', 'be_picker');
