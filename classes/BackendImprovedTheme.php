@@ -21,28 +21,16 @@ use Backend;
 class BackendImprovedTheme extends Backend
 {
 	
-	/**
-	 * 
-	 */
-	protected $arrConfig;
-	
 	/*
-	 * 
+	 * store callbacks
 	 */
 	protected static $arrCallbacks = array();
 	
 	
 	/**
-	 * 
-	 */
-	public function __construct()
-	{
-		$this->arrConfig = &$GLOBALS['TL_CONFIG']['backendImprovedConfig'];
-		$this->import('BackendUser', 'User');
-	}
-	
-	/**
 	 * add stylesheet or javascript to the template depending on settings
+	 * 
+	 * @var Template
 	 */
 	public function onParseTemplate (&$objTemplate)
 	{
@@ -61,15 +49,21 @@ class BackendImprovedTheme extends Backend
 	
 	
 	/**
+	 * call callbacks in after generating output
 	 * 
+	 * @param string
+	 * @param string
+	 * @return string
 	 */
 	public function onParseBackendTemplate($strContent, $strTemplate)
 	{
+		// check template
 		if(!in_array($strTemplate, $GLOBALS['TL_CONFIG']['useBackendImprovedOnTemplates']))
 		{
 			return $strContent;
 		}
 		
+		// run throw callbacks
 		foreach (static::$arrCallbacks as $callback) 
 		{
 			if(is_string($callback))
@@ -88,7 +82,9 @@ class BackendImprovedTheme extends Backend
 	
 	
 	/**
+	 * onload data container
 	 * 
+	 * @var string
 	 */
 	public function onLoadDataContainer($strTable)
 	{
@@ -102,7 +98,8 @@ class BackendImprovedTheme extends Backend
 		{
 			static::$arrCallbacks[] = $GLOBALS['TL_DCA'][$strTable]['improved_theme']['header_callback'];
 		}
-		elseif (in_array($GLOBALS['TL_DCA'][$strTable]['list']['sorting']['mode'], array(3,4,6)) && !in_array($strTable, $this->arrConfig['header_operation_blacklist'])) 
+		// callback can be disabled in the dca
+		elseif (!isset($GLOBALS['TL_DCA'][$strTable]['improved_theme']['disable_header_callback']) && in_array($GLOBALS['TL_DCA'][$strTable]['list']['sorting']['mode'], array(3,4,6))) 
 		{
 			static::$arrCallbacks[] = 'callbackHeaderOperation';			
 		}
@@ -126,9 +123,9 @@ class BackendImprovedTheme extends Backend
 		}
 
 		// check if show operation exists as fallback 
-		elseif (isset($GLOBALS['TL_DCA'][$strTable]['list']['operations']['show']))
+		if (isset($GLOBALS['TL_DCA'][$strTable]['list']['operations']['show']))
 		{
-			$this->addRowOperationClass($strTable, 'show');			
+			$this->addRowOperationClass($strTable, 'show', 'beit_fallback');			
 		}
 	}
 	
@@ -139,45 +136,51 @@ class BackendImprovedTheme extends Backend
 	 * @param string table
 	 * @param string operation
 	 */
-	protected function addRowOperationClass($strTable, $strOperation)
+	protected function addRowOperationClass($strTable, $strOperation, $strClass='beit_target')
 	{
 		// no attribute set, just add class
 		if(!isset($GLOBALS['TL_DCA'][$strTable]['list']['operations'][$strOperation]['attributes']))
 		{
-			$GLOBALS['TL_DCA'][$strTable]['list']['operations'][$strOperation]['attributes'] = 'class="row_operation"';
+			$GLOBALS['TL_DCA'][$strTable]['list']['operations'][$strOperation]['attributes'] = 'class="' . $strClass . '"';
 		}
 		
 		// class attribut exists, add another class
 		elseif(preg_match('/class\s*=/', $GLOBALS['TL_DCA'][$strTable]['list']['operations'][$strOperation]['attributes']))
 		{
 			$GLOBALS['TL_DCA'][$strTable]['list']['operations'][$strOperation]['attributes'] = preg_replace(
-				'/(class\s*=\s*(\'|"))/', '\1row_operation ', $GLOBALS['TL_DCA'][$strTable]['list']['operations'][$strOperation]['attributes']
+				'/(class\s*=\s*(\'|"))/', '\1' . $strClass . ' ', $GLOBALS['TL_DCA'][$strTable]['list']['operations'][$strOperation]['attributes']
 			);
 		}
 		
 		// append class
 		else
 		{
-			$GLOBALS['TL_DCA'][$strTable]['list']['operations'][$strOperation]['attributes'] .= ' class="row_operation"';
+			$GLOBALS['TL_DCA'][$strTable]['list']['operations'][$strOperation]['attributes'] .= ' class="' . $strClass . '"';
 		}
 	}
 	
 	
 	/**
+	 * add target to the toggling icon in the file tree
 	 * 
+	 * @var string
+	 * @return string
 	 */
 	protected function callbackFileTreeToggleIcon($strContent)
 	{
-		return preg_replace('/href="([^"]*)do=files&amp;tg([^"]*)"/', '\0 class="row_operation"', $strContent);
+		return preg_replace('/href="([^"]*)do=files&amp;tg([^"]*)"/', '\0 class="beit_target"', $strContent);
 	}
 
 	
 	/**
+	 * add target to header link
 	 * 
+	 * @var string
+	 * @return string
 	 */
 	protected function callbackHeaderOperation($strContent)
 	{
-		return preg_replace('/(<div\s*class="tl_header"(.*)<a\s*href="([^"]*)")/Us', '\0 class="row_operation"', $strContent, 1);
+		return preg_replace('/(<div\s*class="tl_header"(.*)<a\s*href="([^"]*)")/Us', '\0 class="beit_target"', $strContent, 1);
 	}
 	
 	
@@ -186,6 +189,7 @@ class BackendImprovedTheme extends Backend
 	 */
 	protected function useImprovedTheme()
 	{
+		$this->import('BackendUser', 'User');
 		return $GLOBALS['TL_CONFIG']['forceImprovedTheme'] || $GLOBALS['TL_CONFIG']['requireImprovedTheme'] || $this->User->useImprovedTheme;
 	}
 

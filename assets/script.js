@@ -1,185 +1,133 @@
 /**
- * BackendRowConnector adds javascript events to rows
- * and allows to find nested elements by adding conditions
- *
- * @author David Molineus <http://www.netzmacht.de>
+ * BackendRowTarget connects row to an operation
+ * @author David Molineus <http://netzmacht.de>
  */
-function BackendRowWidget(row, sub)
+function BackendRowTarget()
 {
 	var self = this;
-	var rowClass = row;
-	var row = $$(rowClass);
-	var sub = sub;
-	var element;
-	var conditions = new Array();
-
-	self.init = function(type)
-	{		
-		// element not found
-		if(row.length == 0) {
-			return;
-		}
-
-		if(type == 'toggle') {
-			//$$(sub).addClass('behidden');
-			row.addEvent('click', function(e) {
-				toggleChildren(this, e);
-			});
-
-			// only toggle if no search request was made
-			var search = $$('.tl_panel input.active').length;
-
-			// hide child rows if more than 3 parents are found
-			if(search === 0 && row.length > 3) {
-				toggleChildren(row);
-			}
-			
-			window.addEvent('ajax_change', function(e) {
-				// reassign row to fetch new elements
-				newRow = $$(rowClass);				
-				newRow.each(function(el) {
-					if(!row.contains(el)) {
-						toggleChildren(el);
-					}
-				});
-				
-				newRow.addEvent('click', function(e) {
-					toggleChildren(this, e);
-				});
-			});
-		}
-		else {
-			row.addEvent('click', findChildUrl);
-
-			// create tips for the rows
-			for(i= 0; i < row.length; i++) {
-				addTips(row[i], type);
-			}
-		}
-	}
-
-
-	self.createCondition = function(type, property, value, result)
+	
+	/**
+	 * prevent that operation themselve propagate the event to the row
+	 * 
+	 * @param string target
+	 */
+	self.stopPropagation = function(target)
 	{
-		// create single condition
-		var condition = new Object();
-
-		condition.type = type;
-		condition.property = property;
-		condition.value = value;
-		condition.result = result;
-
-		return condition;		
+		$$(target).addEvent('click', function(e) 
+		{
+			e.stopPropagation();
+		});
 	}
-
-
-	self.addCondition = function(condition, type, value, result)
+	
+	
+	/**
+	 * connect a row to the target
+	 * 
+	 * @param string target
+	 */
+	self.connect = function(target)
 	{
-		// create condition
-		if(typeof condition === 'string') {
-			conditions.push(self.createCondition(condition, type, value, result));
-			return;			
+		var row = $$(target);
+		
+		// connect row to target
+		row.addEvent('click', function(e)
+		{
+			var link = this.getElement('.beit_target, .beit_fallback');
+		
+			if(link)
+			{
+				window.location.href = link.getProperty('href');
+			}
+		});
+		
+		// add tips to the row
+		for(i= 0; i < row.length; i++) 
+		{
+			addTips(row[i]);
 		}
-
-		// create combined condition object
-		var obj = new Object();
-		obj.conditions = condition;
-		obj.type = type;
-
-		conditions.push(obj);
 	}
-
-
+	
+	/**
+	 * handle contao mootools tips which are created in Contao 3
+	 */
 	var addTips = function(el)
 	{
 		if(typeof Tips.BackendRow == 'undefined') {
 			return;
 		}
 		
-		var elements = el.getElements(sub);
+		var link = el.getElement('.beit_target, .beit_fallback');
 
-		for(var i=0; i< elements.length; i++) {
-			element = elements[i];
-
-			go = 0;
-
-			for (var j = 0; j < conditions.length; j++) {								
-				if (handleCondition(conditions[j])) {
-					go++;
-					break;
-				}								
-			}
-
-			if(go==0) {
-				el.set('title', element.retrieve('tip:title', element.get('title')));
-				new Tips.BackendRow(el, { 
-					offset: {
-						x: element.getPosition(el).x, 
-						y: element.getPosition(el).y + 25
-					},
-					fixed: false,
-					parentClass: el.getProperty('class')
-				});
-				
-				return;
-			}
-		}
-	}
-
-
-	var findChildUrl = function()
-	{
-		var link = this.getElement('.row_operation');
-		
 		if(link)
 		{
-			window.location.href = link.getProperty('href');
-		}		
+			el.set('title', link.retrieve('tip:title', link.get('title')));
+			new Tips.BackendRow(el, { 
+				offset: {
+					x: link.getPosition(el).x, 
+					y: link.getPosition(el).y + 25
+				},
+				fixed: false,
+				parentClass: el.getProperty('class')
+			});
+		}
+	}
+}
+
+
+/**
+ * BackendRowConnector adds javascript events to rows
+ * and allows to find nested elements by adding conditions
+ *
+ * @author David Molineus <http://www.netzmacht.de>
+ */
+function BackendRowToggler(row)
+{
+	var self = this;
+	var rowClass = row;
+	var row = $$(rowClass);
+	var element;
+	var breakClasses = new Array();
+
+	self.init = function()
+	{		
+		// element not found
+		if(row.length == 0) {
+			return;
+		}
+
+		row.addEvent('click', function(e) {
+			toggleChildren(this, e);
+		});
+
+		// only toggle if no search request was made
+		var search = $$('.tl_panel input.active').length;
+
+		// hide child rows if more than 3 parents are found
+		if(search === 0 && row.length > 3) {
+			toggleChildren(row);
+		}
+		
+		window.addEvent('ajax_change', function(e) {
+			// reassign row to fetch new elements
+			newRow = $$(rowClass);				
+			newRow.each(function(el) {
+				if(!row.contains(el)) {
+					toggleChildren(el);
+				}
+			});
+			
+			newRow.addEvent('click', function(e) {
+				toggleChildren(this, e);
+			});
+		});
 	}
 
 
-	var handleCondition = function(condition)
+	self.addBreakClass = function(value)
 	{
-		// condition is not an set of conditions so directly handle it
-		if(typeof condition === 'object') {
-			switch (condition.type) {
-				case 'value':
-					var value = (element.getProperty(condition.property) == condition.value);
-					return (value == condition.result);
-					break;
-
-				case 'test':
-					var value = new String(element.getProperty(condition.property));					
-					return (value.test(condition.value, 'i') == condition.result);
-					break;
-			}
-			return false;
-		}
-
-
-		// handle set of conditions
-		var results = false;
-
-		if(condition.type == 'and') {
-			results = true;
-		}
-
-		for(var i=0; i < condition.conditions.length; i++) {
-			var result = handleCondition(condition.conditions[i]);
-
-			// handle and conditions
-			if(condition.type == 'and') {
-				results = results && result;
-			}
-
-			// handle or condition
-			else {
-				results = result || result;
-			}
-		}
-
-		return results;
+		breakClasses.push(value);
 	}
+
 
 	var toggleChildren = function(el, e)
 	{
@@ -203,8 +151,8 @@ function BackendRowWidget(row, sub)
 		for(var i=0; i< elements.length; i++) {
 			element = elements[i];
 
-			for (var j = 0; j < conditions.length; j++) {								
-				if (handleCondition(conditions[j])) {
+			for (var j = 0; j < breakClasses.length; j++) {								
+				if (element.hasClass(breakClasses[j])) {
 					return;
 					break;
 				}								
@@ -217,7 +165,7 @@ function BackendRowWidget(row, sub)
 
 
 /**
- * create modified tip class which only shows tip if not a children 
+ * create modified tip class which only show tip if not a children 
  * fired the tip. Need this to handles icon tips inside the row
  * 
  * it's a contao 3 feature, so let's check if Tips.Contao exists
@@ -251,42 +199,28 @@ if(typeof Tips.Contao != 'undefined')
 	});	
 }
 
+
 document.addEvent('domready', function() 
 {
-
-	// prevent toggling icon trigger other functions	
-	$$('.tl_listing li .tl_left > a, .tl_listing tr .tl_left > a, .tl_right_nowrap > a, .tl_right > a, .tl_content_right > a').addEvent('click', function(e) {
-		e.stopPropagation();
-	});
-
-	// init listing 
-	var listing = new BackendRowWidget('.tl_listing li.tl_file, .tl_listing tr', '.tl_right a, .tl_right_nowrap a');
-	listing.init();
+	// initialize Backend Row target connection
+	var target = new BackendRowTarget();
+	target.stopPropagation('.tl_listing .tl_left > a');
+	target.stopPropagation('.tl_right_nowrap > a');
+	target.stopPropagation('.tl_right > a');
+	target.stopPropagation('.tl_content_right > a');
 	
-	// init file manager folder toggling 
-	var folder = new BackendRowWidget('.tl_listing li.tl_folder', 'a');
-	folder.init();
-
+	// add row elements
+	// have to split between tl_folder and tl_file otherwise tips get crazy
+	target.connect('.tl_listing li.tl_folder');
+	target.connect('.tl_listing li.tl_file');
+	target.connect('.tl_listing tr');
+	target.connect('.tl_content');
+	target.connect('.tl_header');
 
 	// init article view page toggling
-	var page = new BackendRowWidget('.tl_listing.tl_tree_xtnd li.tl_folder', '.tl_file, .parent');
-	page.addCondition('test', 'class', 'tl_folder', true);
-	page.addCondition('test', 'class', 'parent', true);
-	page.init('toggle');
-
-
-	// init tl_content
-	var content = new BackendRowWidget('.tl_content', '.tl_content_right a');
-	content.init();
-
-	// init tl_header
-	var header = new BackendRowWidget('.tl_header', '.tl_content_right a');
-	header.init();
-
-
-	// init content header handling 
-	var contentHeader = new BackendRowWidget('.tl_listing_container.parent_view .tl_content_header', '.tl_content');
-	contentHeader.addCondition('test', 'class', 'tl_content_header', true);
-	contentHeader.init('toggle');
+	var page = new BackendRowToggler('.tl_listing.tl_tree_xtnd li.tl_folder');
+	page.addBreakClass('tl_folder');
+	page.addBreakClass('parent');
+	page.init();
 
 });

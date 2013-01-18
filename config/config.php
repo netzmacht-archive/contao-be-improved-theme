@@ -20,9 +20,3 @@ $GLOBALS['SETUP_EXT_HOOK']['be_improved_theme'][] = array('BackendImprovedTheme'
 
 // define templates on which improved theme will be used
 $GLOBALS['TL_CONFIG']['useBackendImprovedOnTemplates'] = array('be_main', 'be_files', 'be_picker');
-
-$GLOBALS['TL_CONFIG']['backendImprovedConfig'] = array
-(
-	'row_operation_blacklist' => array(),
-	'header_operation_blacklist' => array('tl_article', 'tl_news'),
-);
