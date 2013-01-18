@@ -27,7 +27,7 @@ class BackendImprovedTheme extends Backend
 	public function onParseTemplate (&$objTemplate)
 	{
 		
-		if(TL_MODE != 'BE' || !in_array($objTemplate->getName(), $GLOBALS['useBackendImrovedOnTemplates'])) 
+		if(TL_MODE != 'BE' || !in_array($objTemplate->getName(), $GLOBALS['useBackendImprovedOnTemplates'])) 
 		{
 			return;
 		}
