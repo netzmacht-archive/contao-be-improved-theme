@@ -19,30 +19,32 @@
 class BackendImprovedTheme extends Backend
 {
 	
-	/*
+	/**
 	 * store callbacks
+	 * @var array
 	 */
 	protected static $arrCallbacks = array();
 	
+	/**
+	 * generated output which will be passed to the template
+	 * @var array
+	 */
+	protected static $arrScripts = array();
+	
 	
 	/**
-	 * add stylesheet or javascript to the template depending on settings
+	 * add stylesheet to the template depending on settings
 	 * 
-	 * @var Template
+	 * @param Template
 	 */
 	public function onParseTemplate (&$objTemplate)
 	{
-		
-		if(TL_MODE != 'BE' || !in_array($objTemplate->getName(), $GLOBALS['TL_CONFIG']['useBackendImprovedOnTemplates'])) 
+		if(TL_MODE != 'BE' || !$this->useImprovedTheme() || !in_array($objTemplate->getName(), $GLOBALS['TL_CONFIG']['useBackendImprovedOnTemplates'])) 
 		{
 			return;
 		}
 		
-		if($this->useImprovedTheme())
-		{	
-			$objTemplate->javascripts .= '<script src="system/modules/be_improved_theme/assets/script.js"></script>' . "\r\n";
-			$objTemplate->stylesheets .= '<link rel="stylesheet" href="system/modules/be_improved_theme/assets/style.css">' . "\r\n";
-		}
+		$objTemplate->stylesheets .= '<link rel="stylesheet" href="system/modules/be_improved_theme/assets/style.css">' . "\r\n";
 	}
 	
 	
@@ -56,7 +58,7 @@ class BackendImprovedTheme extends Backend
 	public function onParseBackendTemplate($strContent, $strTemplate)
 	{
 		// check template
-		if(!in_array($strTemplate, $GLOBALS['TL_CONFIG']['useBackendImprovedOnTemplates']))
+		if(!$this->useImprovedTheme() || !in_array($strTemplate, $GLOBALS['TL_CONFIG']['useBackendImprovedOnTemplates']))
 		{
 			return $strContent;
 		}
@@ -75,6 +77,13 @@ class BackendImprovedTheme extends Backend
 			}			
 		}
 		
+		// add javascript to the body of the page
+		if(!empty(static::$arrScripts))
+		{
+			$strGenerated = implode('', static::$arrScripts);
+			$strContent = preg_replace('/<\/body>/', '<script>document.addEvent(\'domready\', function(e) {' . "\r\n" . $strGenerated . '});</script>\0', $strContent, 1);
+		}
+		
 		return $strContent;		
 	}
 	
@@ -82,38 +91,40 @@ class BackendImprovedTheme extends Backend
 	/**
 	 * onload data container
 	 * 
-	 * @var string
+	 * @param string
 	 */
 	public function onLoadDataContainer($strTable)
 	{
-		if(!$this->useImprovedTheme())
+		if(!$this->useImprovedTheme() || !$this->isActiveTable($strTable))
 		{
 			return;
 		}
 		
+		// get config from dca
+		$arrConfig = isset($GLOBALS['TL_DCA'][$strTable]['improved_theme']) ? $GLOBALS['TL_DCA'][$strTable]['improved_theme'] : array();
+		
 		// header callback
-		if(isset($GLOBALS['TL_DCA'][$strTable]['improved_theme']['header_callback']))
+		if(isset($arrConfig['header_callback']) && $arrConfig['header_callback'] !== false)
 		{
 			static::$arrCallbacks[] = $GLOBALS['TL_DCA'][$strTable]['improved_theme']['header_callback'];
 		}
 		// callback can be disabled in the dca
-		elseif (!isset($GLOBALS['TL_DCA'][$strTable]['improved_theme']['disable_header_callback']) && in_array($GLOBALS['TL_DCA'][$strTable]['list']['sorting']['mode'], array(3,4,6))) 
+		elseif ($arrConfig['header_callback'] !== false && in_array($GLOBALS['TL_DCA'][$strTable]['list']['sorting']['mode'], array(3,4))) 
 		{
-			static::$arrCallbacks[] = 'callbackHeaderOperation';			
+			static::$arrCallbacks[] = 'callbackHeaderOperation';
+			$this->addBackendRowTarget(isset($arrConfig['header_class']) ? $arrConfig['header_class'] : 'tl_header');
 		}
 
 		// row operation callback
-		if(isset($GLOBALS['TL_DCA'][$strTable]['improved_theme']['row_operation_callback']))
+		if(isset($arrConfig['row_operation_callback']))
 		{
-			static::$arrCallbacks[] = $GLOBALS['TL_DCA'][$strTable]['improved_theme']['row_operation_callback'];
-		}
-		
+			static::$arrCallbacks[] = $arrConfig['row_operation_callback'];
+		}		
 		// support configuration by the dca
-		if(isset($GLOBALS['TL_DCA'][$strTable]['improved_theme']['row_operation']))
+		if(isset($arrConfig['row_operation']))
 		{
-			$this->addRowOperationClass($strTable, $GLOBALS['TL_DCA'][$strTable]['config']['row_operation']);
+			$this->addRowOperationClass($strTable, $arrConfig['row_operation']);
 		}
-		
 		// check if edit operation exists
 		elseif(isset($GLOBALS['TL_DCA'][$strTable]['list']['operations']['edit']))
 		{
@@ -121,14 +132,62 @@ class BackendImprovedTheme extends Backend
 		}
 
 		// fallback option if operation does not exists or user have no access
-		if(isset($GLOBALS['TL_DCA'][$strTable]['improved_theme']['row_operation_fallback']))
+		if(isset($arrConfig['row_operation_fallback']))
 		{
-			$this->addRowOperationClass($strTable, $GLOBALS['TL_DCA'][$strTable]['config']['row_operation']);
+			$this->addRowOperationClass($strTable, $arrConfig['row_operation_fallback']);
 		}
 		elseif (isset($GLOBALS['TL_DCA'][$strTable]['list']['operations']['show']))
 		{
 			$this->addRowOperationClass($strTable, 'show', 'beit_fallback');			
 		}
+		
+		// add extra java script
+		if(isset($arrConfig['javascript']))
+		{
+			$GLOBALS['TL_JAVASCRIPT'][] = $arrConfig['javascript'];
+		}
+		
+		// make customizeable, add every registered row class
+		if(isset($arrConfig['row_class']))
+		{
+			$this->addBackendRowTarget($arrConfig['row_class']);
+		}
+		// default class for mode 1
+		elseif(in_array($GLOBALS['TL_DCA'][$strTable]['list']['sorting']['mode'], array(1,2)))
+		{
+			$this->addBackendRowTarget('tl_listing tr');
+		}
+		// default class for mode 5 and 6
+		elseif($GLOBALS['TL_DCA'][$strTable]['config']['dataContainer'] == 'Folder' || in_array($GLOBALS['TL_DCA'][$strTable]['list']['sorting']['mode'], array(5, 6)))
+		{
+			$this->addBackendRowTarget('tl_listing li.tl_file');
+			$this->addBackendRowTarget('tl_listing tr.tl_folder');
+		}
+		// default class for all other modes
+		else
+		{
+			$this->addBackendRowTarget('tl_content');
+		}
+	}
+
+
+	/**
+	 * add BackendRowTarget for passed class
+	 * 
+	 * @param string
+	 */
+	protected function addBackendRowTarget($strClass)
+	{		
+		if(!static::$arrScripts['backendRowTarget'])
+		{
+			$GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/be_improved_theme/assets/backendRowTarget.js';
+			
+			$strScript = 'var connector = new BackendRowTarget(); ' . "\r\n";
+			$strScript .= 'connector.stopPropagation(\'.tl_listing .tl_left > a, .tl_right_nowrap > a, .tl_right > a,.tl_content_right > a\');' . "\r\n"; 
+			static::$arrScripts['backendRowTarget'] = $strScript;
+		}
+
+		static::$arrScripts['backendRowTarget'] .= 'connector.connect(\'.' . $strClass . '\');' . "\r\n";
 	}
 	
 	
@@ -154,7 +213,7 @@ class BackendImprovedTheme extends Backend
 			);
 		}
 		
-		// append class
+		// append class attribute
 		else
 		{
 			$GLOBALS['TL_DCA'][$strTable]['list']['operations'][$strOperation]['attributes'] .= ' class="' . $strClass . '"';
@@ -183,6 +242,33 @@ class BackendImprovedTheme extends Backend
 	protected function callbackHeaderOperation($strContent)
 	{
 		return preg_replace('/(<div\s*class="tl_header"(.*)<a\s*href="([^"]*)")/Us', '\0 class="beit_target"', $strContent, 1);
+	}
+	
+	
+	/**
+	 * check if table is the active table
+	 * 
+	 * @param string
+	 * @return bool
+	 */
+	public function isActiveTable($strTable)
+	{
+		if($this->Input->get('table') != '')
+		{
+			return $strTable == $this->Input->get('table');
+		}
+		
+		$strModule = $this->Input->get('do');
+		
+		foreach ($GLOBALS['BE_MOD'] as $arrGroup) 
+		{
+			if(isset($arrGroup[$strModule]))
+			{
+				return $strTable == $arrGroup[$strModule]['tables'][0];
+			}			
+		}
+		
+		return false;
 	}
 	
 	
