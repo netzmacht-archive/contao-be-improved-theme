@@ -131,6 +131,7 @@ ul.level_1 .tl_left {
 
 #contextmenu.beit_contextMenu li
 {
+	list-style: none;
 	padding: 2px;
 }
 

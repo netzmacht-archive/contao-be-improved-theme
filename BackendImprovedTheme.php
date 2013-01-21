@@ -111,7 +111,7 @@ class BackendImprovedTheme extends Backend
 		}
 
 		// switch to tl_files table
-		if($strTable != 'tl_files' && in_array(Environment::get('script'), array('contao/file.php', 'contao/files.php')))
+		if($strTable != 'tl_files' && in_array($this->Environment->script, array('contao/file.php', 'contao/files.php')))
 		{
 			$strTable = 'tl_files';
 			$this->loadDataContainer('tl_files');

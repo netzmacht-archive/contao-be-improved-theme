@@ -37,7 +37,7 @@ $GLOBALS['TL_DCA']['tl_user']['fields']['useImprovedTheme'] = array
 	'default'                 => 1,
 	'exclude'                 => true,
 	'inputType'               => 'checkbox',
-	'eval'                    => array('submitOnChange' => true, 'tl_class'=>'w50'),
+	'eval'                    => array('submitOnChange' => true, 'tl_class'=>'clr'),
 	'sql'                     => "char(1) NOT NULL default ''"
 );
 
