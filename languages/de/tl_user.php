@@ -17,3 +17,9 @@ $GLOBALS['TL_LANG']['tl_user']['useImprovedTheme'] = array
 	'Backend Theme Verbesserungen', 
 	'Diese Erweiterung verbessert die Größe und Erreichbarkeit von Navigationselementen im Backend'
 );
+
+$GLOBALS['TL_LANG']['tl_user']['useImprovedThemeContextMenu'] = array
+(
+	'Context Menü aktivieren', 
+	'Anstatt der Standard-Darstellung werden Aktionen ein Context Menü eingeblendet. Dieses ist per Icon bzw. Rechtsclick erreichbar.'
+);

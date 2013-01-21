@@ -17,3 +17,9 @@ $GLOBALS['TL_LANG']['tl_user']['useImprovedTheme'] = array
 	'Use backend theme improvements', 
 	'Enable this to get usability improvements for navigation elements on the backend theme.'
 );
+
+$GLOBALS['TL_LANG']['tl_user']['useImprovedThemeContextMenu'] = array
+(
+	'Activate context menü', 
+	'Instead of default icon listing the actions will be placed in a context menu. This is accessible with an icon or right click'
+);

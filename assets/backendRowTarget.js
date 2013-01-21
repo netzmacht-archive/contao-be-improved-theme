@@ -25,7 +25,7 @@ function BackendRowTarget()
 	 * 
 	 * @param string target
 	 */
-	self.connect = function(target)
+	self.connect = function(target, disableTips)
 	{
 		var row = $$(target);
 		
@@ -41,10 +41,13 @@ function BackendRowTarget()
 		});
 		
 		// add tips to the row
-		for(i= 0; i < row.length; i++) 
+		if(disableTips == undefined || !disableTips)
 		{
-			addTips(row[i]);
-		}
+			for(i= 0; i < row.length; i++) 
+			{
+				addTips(row[i]);
+			}			
+		}		
 	}
 	
 	/**

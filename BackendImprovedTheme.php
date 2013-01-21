@@ -114,7 +114,11 @@ class BackendImprovedTheme extends Backend
 			static::$arrCallbacks[] = 'callbackHeaderOperation';
 			$strClass = isset($arrConfig['header_class']) ? $arrConfig['header_class'] : 'tl_header';
 			$this->addBackendRowTarget($strClass);
-			$this->addContextMenu($strClass);
+			
+			if($this->User->useImprovedThemeContextMenu)
+			{
+				$this->addContextMenu($strClass);				
+			}
 		}
 
 		// row operation callback
@@ -172,7 +176,11 @@ class BackendImprovedTheme extends Backend
 		}
 		
 		$this->addBackendRowTarget($strClass);
-		$this->addContextMenu($strClass);
+		
+		if($this->User->useImprovedThemeContextMenu)
+		{
+			$this->addContextMenu($strClass);
+		}
 	}
 
 
@@ -192,7 +200,14 @@ class BackendImprovedTheme extends Backend
 			static::$arrScripts['backendRowTarget'] = $strScript;
 		}
 
-		static::$arrScripts['backendRowTarget'] .= 'connector.connect(\'.' . $strClass . '\');' . "\r\n";
+		if($this->User->useImprovedThemeContextMenu)
+		{
+			static::$arrScripts['backendRowTarget'] .= 'connector.connect(\'.' . $strClass . '\');' . "\r\n";
+		}
+		else
+		{
+			static::$arrScripts['backendRowTarget'] .= 'connector.connect(\'.' . $strClass . '\', true);' . "\r\n";			
+		}		
 	}
 	
 	

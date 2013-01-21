@@ -12,6 +12,9 @@
  *  
  **/
 
+$GLOBALS['TL_DCA']['tl_user']['subpalettes']['useImprovedTheme'] = 'useImprovedThemeContextMenu';
+$GLOBALS['TL_DCA']['tl_user']['palettes']['__selector__'][] = 'useImprovedTheme';
+
 $arrPalettes = array('admin', 'custom', 'default', 'extend', 'group');
 if(!$GLOBALS['TL_CONFIG']['forceImprovedTheme'] && !$GLOBALS['TL_CONFIG']['requireImprovedTheme']) 
 {
@@ -33,6 +36,15 @@ $GLOBALS['TL_DCA']['tl_user']['fields']['useImprovedTheme'] = array
 	'label'                   => &$GLOBALS['TL_LANG']['tl_user']['useImprovedTheme'],
 	'default'                 => 1,
 	'exclude'                 => true,
+	'inputType'               => 'checkbox',
+	'eval'                    => array('submitOnChange' => true, 'tl_class'=>'clr'),
+	'sql'                     => "char(1) NOT NULL default ''"
+);
+
+$GLOBALS['TL_DCA']['tl_user']['fields']['useImprovedThemeContextMenu'] = array
+(
+	'label'                   => &$GLOBALS['TL_LANG']['tl_user']['useImprovedThemeContextMenu'],
+	'default'                 => 1,
 	'inputType'               => 'checkbox',
 	'eval'                    => array('tl_class'=>'clr'),
 	'sql'                     => "char(1) NOT NULL default ''"
