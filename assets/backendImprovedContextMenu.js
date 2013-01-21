@@ -46,7 +46,12 @@ BackendImprovedContextMenu = new Class(
         	// hide buttons
         	el.getElements('.tl_listing .tl_left, .tl_right_nowrap, .tl_right, .tl_content_right').each(function(operations) {
         		operations.getChildren().each(function(child) {
-	        		child.hide();
+        			var href = child.getProperty('href');
+        			
+        			if(href != undefined && !href.test('act=cut'))
+        			{
+        				child.hide();        				
+        			}
 	        	});
 	        	
 	        	var newButton = menuButton.clone();
@@ -57,6 +62,8 @@ BackendImprovedContextMenu = new Class(
 	        		el.fireEvent(this.options.trigger, e);
 	        	}.bind(this));
 	        	
+	        	var space = document.createTextNode(' ');
+	        	operations.appendChild(space);
 	        	newButton.inject(operations);
         	}, this);
         	
