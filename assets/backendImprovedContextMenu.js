@@ -42,20 +42,24 @@ BackendImprovedContextMenu = new Class(
 		
         /* all elemnts */
         this.targets.each(function(el) 
-        {        
+        {
         	// hide buttons
-        	el.getElements('.tl_listing .tl_left, .tl_right_nowrap, .tl_right, .tl_content_right').each(function(operations) {
+        	el.getElements('.tl_right_nowrap, .tl_right, .tl_content_right').each(function(operations) {        		
+        		if(operations.getChildren().length < 2)
+        		{
+        			return;
+        		}
+        		
         		operations.getChildren().each(function(child) {
         			var href = child.getProperty('href');
         			
-        			if(href != undefined && !href.test('act=cut'))
+        			if(href == undefined || !href.test('act=cut'))
         			{
         				child.hide();        				
         			}
 	        	});
 	        	
-	        	var newButton = menuButton.clone();
-	        	
+	        	var newButton = menuButton.clone();	        	
 	        	newButton.addEvent('click', function(e) {
 	        		e.stopPropagation();
 	        		console.log(this.options.trigger);
@@ -152,14 +156,15 @@ BackendImprovedContextMenu = new Class(
 	 */
 	parseRowNodes: function(row)
 	{
-		var operations = row.getElement('.tl_listing .tl_left, .tl_right_nowrap, .tl_right, .tl_content_right');
+		var operations = row.getElement('.tl_right_nowrap, .tl_right, .tl_content_right');
 		var elements = operations.getChildren();
 		
 		//empty menu
 		this.menu.empty();
 		
 		elements.each(function(origin) {
-			if(origin.hasClass('beit_ContextMenuToggler')) {
+			// do not agg toggler itself and disabled icons to context menu
+			if(origin.hasClass('beit_ContextMenuToggler') || origin.get('tag') != 'a') {
 				return;
 			}
 			
@@ -170,14 +175,12 @@ BackendImprovedContextMenu = new Class(
 			node.show();
 			
 			// handle links
-			if(node.get('tag') == 'a') {
-				node.addEvent('click',function(e) {
-	                if(!node.hasClass('disabled') && node.href != undefined) {
-	                    this.fireEvent('click',[node,e]);
-	            	}
-	          }.bind(this));
-			}
-
+			node.addEvent('click',function(e) {
+                if(!node.hasClass('disabled') && node.href != undefined) {
+                    this.fireEvent('click',[node,e]);
+            	}
+          	}.bind(this));
+	          
 			if(node.getElement('img') != undefined && node.getElement('img').getProperty('alt') != undefined)
 			{
 				var title = new Element('span');
