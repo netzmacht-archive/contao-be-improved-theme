@@ -31,18 +31,22 @@ function BackendArticleTreeToggler(row)
 			toggleChildren(row);
 		}
 		
-		window.addEvent('ajax_change', function(e) {
-			// reassign row to fetch new elements
-			newRow = $$(rowClass);				
-			newRow.each(function(el) {
+		// reassign row to fetch new elements
+		window.addEvent('ajax_change', function(e) {			
+			newRow = $$(rowClass);
+			
+			newRow.each(function(el) 
+			{				
 				if(!row.contains(el)) {
 					toggleChildren(el);
+					
+					el.addEvent('click', function(e) {
+						toggleChildren(this, e);
+					});
 				}
-			});
+			});		
 			
-			newRow.addEvent('click', function(e) {
-				toggleChildren(this, e);
-			});
+			row = newRow;
 		});
 	}
 
