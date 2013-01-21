@@ -1,5 +1,5 @@
 
-.limit_toggler, .behidden {
+.limit_toggler, .beit_hidden {
 	display: none;
 }
 
@@ -48,7 +48,13 @@ ul.level_1 .tl_left {
 .tl_listing tr:hover td.tl_right_nowrap a, 
 .tl_content_header:hover .tl_content_right a, 
 .tl_header:hover a,
-.tl_content:hover .tl_content_right a {
+.tl_content:hover .tl_content_right a,
+
+.tl_listing li > .tl_right > a.beit_hover.beit_ContextMenuToggler,
+.tl_listing tr td.tl_right_nowrap a.beit_hover.beit_ContextMenuToggler, 
+.tl_content_header .tl_content_right a.beit_hover.beit_ContextMenuToggler, 
+.tl_header a.beit_hover.beit_ContextMenuToggler,
+.tl_content .tl_content_right a.beit_hover.beit_ContextMenuToggler {
 	opacity: 1;
 	background: #fff;
 	border: 1px solid #E9E9E9;
@@ -104,4 +110,31 @@ ul.level_1 .tl_left {
 	padding: 6px 3px 3px 3px;
 	width: 17px!important;
 	height: 14px;
+}
+
+.beit_hover {
+	background-color: #ebfdd7;
+}
+
+/**
+ * 	
+ */
+#contextmenu.beit_contextMenu span
+{
+	margin-left: 22px;
+}
+
+#contextmenu.beit_contextMenu a img
+{
+	position: absolute;
+}
+
+#contextmenu.beit_contextMenu li
+{
+	padding: 2px;
+}
+
+#contextmenu.beit_contextMenu li:hover
+{
+	background-color: #f0f0f0;
 }

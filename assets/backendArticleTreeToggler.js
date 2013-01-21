@@ -82,7 +82,7 @@ function BackendArticleTreeToggler(row)
 				}								
 			}
 
-			element.toggleClass('behidden');
+			element.toggleClass('beit_hidden');
 		}
 	}
 }

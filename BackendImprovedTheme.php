@@ -80,7 +80,7 @@ class BackendImprovedTheme extends Backend
 		// add javascript to the body of the page
 		if(!empty(static::$arrScripts))
 		{
-			$strGenerated = implode('', static::$arrScripts);
+			$strGenerated = implode("\r\n", static::$arrScripts);
 			$strContent = preg_replace('/<\/body>/', '<script>document.addEvent(\'domready\', function(e) {' . "\r\n" . $strGenerated . '});</script>\0', $strContent, 1);
 		}
 		
@@ -112,7 +112,9 @@ class BackendImprovedTheme extends Backend
 		elseif ($arrConfig['header_callback'] !== false && in_array($GLOBALS['TL_DCA'][$strTable]['list']['sorting']['mode'], array(3,4))) 
 		{
 			static::$arrCallbacks[] = 'callbackHeaderOperation';
-			$this->addBackendRowTarget(isset($arrConfig['header_class']) ? $arrConfig['header_class'] : 'tl_header');
+			$strClass = isset($arrConfig['header_class']) ? $arrConfig['header_class'] : 'tl_header';
+			$this->addBackendRowTarget($strClass);
+			$this->addContextMenu($strClass);
 		}
 
 		// row operation callback
@@ -150,24 +152,27 @@ class BackendImprovedTheme extends Backend
 		// make customizeable, add every registered row class
 		if(isset($arrConfig['row_class']))
 		{
-			$this->addBackendRowTarget($arrConfig['row_class']);
+			$strClass = $arrConfig['row_class'];
+			
 		}
 		// default class for mode 1
 		elseif(in_array($GLOBALS['TL_DCA'][$strTable]['list']['sorting']['mode'], array(1,2)))
 		{
-			$this->addBackendRowTarget('tl_listing tr');
+			$strClass = 'tl_listing tr';
 		}
 		// default class for mode 5 and 6
 		elseif($GLOBALS['TL_DCA'][$strTable]['config']['dataContainer'] == 'Folder' || in_array($GLOBALS['TL_DCA'][$strTable]['list']['sorting']['mode'], array(5, 6)))
 		{
-			$this->addBackendRowTarget('tl_listing li.tl_file');
-			$this->addBackendRowTarget('tl_listing tr.tl_folder');
+			$strClass = 'tl_listing li.tl_file, .tl_listing tr.tl_folder';
 		}
 		// default class for all other modes
 		else
 		{
-			$this->addBackendRowTarget('tl_content');
+			$strClass = 'tl_content';
 		}
+		
+		$this->addBackendRowTarget($strClass);
+		$this->addContextMenu($strClass);
 	}
 
 
@@ -190,6 +195,23 @@ class BackendImprovedTheme extends Backend
 		static::$arrScripts['backendRowTarget'] .= 'connector.connect(\'.' . $strClass . '\');' . "\r\n";
 	}
 	
+	
+	/**
+	 * 
+	 */
+	protected function addContextMenu($strClass)
+	{
+		if(!static::$arrScripts['contextMenu'])
+		{
+			$GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/be_improved_theme/assets/contextMenu.js';
+			$GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/be_improved_theme/assets/backendImprovedContextMenu.js';
+			
+			static::$arrScripts['contextMenu'] = 'var contextMenu = new BackendImprovedContextMenu({menu: \'contextmenu\' }); ' . "\r\n";
+			static::$arrScripts['contextMenuExecute'] = 'contextMenu.execute();' . "\r\n";
+		}
+		
+		static::$arrScripts['contextMenu'] .= 'contextMenu.addTarget(\'.' . $strClass . '\');' . "\r\n";	
+	}
 	
 	/**
 	 * add row operation class to operation
