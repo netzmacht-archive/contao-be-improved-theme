@@ -200,19 +200,22 @@ class BackendImprovedTheme extends Backend
 			static::$arrScripts['backendRowTarget'] = $strScript;
 		}
 
+		// disable auto generated tips if context menu is activated
 		if($this->User->useImprovedThemeContextMenu)
 		{
-			static::$arrScripts['backendRowTarget'] .= 'connector.connect(\'.' . $strClass . '\');' . "\r\n";
+			static::$arrScripts['backendRowTarget'] .= 'connector.connect(\'.' . $strClass . '\', true);' . "\r\n";
 		}
 		else
 		{
-			static::$arrScripts['backendRowTarget'] .= 'connector.connect(\'.' . $strClass . '\', true);' . "\r\n";			
+			static::$arrScripts['backendRowTarget'] .= 'connector.connect(\'.' . $strClass . '\');' . "\r\n";
 		}		
 	}
 	
 	
 	/**
+	 * add context menu to generated scripts
 	 * 
+	 * @param string class
 	 */
 	protected function addContextMenu($strClass)
 	{
@@ -227,6 +230,7 @@ class BackendImprovedTheme extends Backend
 		
 		static::$arrScripts['contextMenu'] .= 'contextMenu.addTarget(\'.' . $strClass . '\');' . "\r\n";	
 	}
+	
 	
 	/**
 	 * add row operation class to operation
