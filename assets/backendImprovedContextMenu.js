@@ -36,80 +36,25 @@ BackendImprovedContextMenu = new Class(
     {
     	this.targets = $$(this.options.targets);
     	
-    	var menuButton = new Element('a');
-    	menuButton.addClass('beit_ContextMenuToggler');
-		new Element('img').setProperty('src', 'system/modules/be_improved_theme/assets/menu.png').inject(menuButton);
+    	this.menuButton = new Element('a');
+    	this.menuButton.addClass('beit_ContextMenuToggler');
+		new Element('img').setProperty('src', 'system/modules/be_improved_theme/assets/menu.png').inject(this.menuButton);
 		
         /* all elemnts */
-        this.targets.each(function(el) 
-        {
-        	// hide buttons
-        	el.getElements('.tl_right_nowrap, .tl_right, .tl_content_right').each(function(operations) {        		
-        		if(operations.getChildren().length < 2)
-        		{
-        			return;
+        this.targets.each(function(el) {
+        	this.handleTarget(el);
+        }, this);
+        
+        window.addEvent('ajax_change', function(e) {
+        	newTargets = $$(this.options.targets);
+        	
+        	newTargets.each(function(target) {
+        		if(!this.targets.contains(target)) {
+        			this.handleTarget(target);
         		}
-        		
-        		operations.getChildren().each(function(child) {
-        			var href = child.getProperty('href');
-        			
-        			if(href == undefined || !href.test('act=cut'))
-        			{
-        				child.hide();        				
-        			}
-	        	});
-	        	
-	        	var newButton = menuButton.clone();	        	
-	        	newButton.addEvent('click', function(e) {
-	        		e.stopPropagation();
-	        		console.log(this.options.trigger);
-	        		el.fireEvent(this.options.trigger, e);
-	        	}.bind(this));
-	        	
-	        	var space = document.createTextNode(' ');
-	        	operations.appendChild(space);
-	        	newButton.inject(operations);
         	}, this);
         	
-        	
-            /* show the menu */
-            el.addEvent(this.options.trigger, function(e) 
-            {
-                //enabled?
-                if(!this.options.disabled) {
-                	el.addClass('beit_hover');
-                	el.getElement('.beit_ContextMenuToggler').addClass('beit_hover')
-                	
-                    //prevent default, if told to
-                    if(this.options.stopEvent) { e.stop(); }
-                    //record this as the trigger
-                    this.options.element = document.id(el);
-                    //position the menu
-                    
-                    this.parseRowNodes(el);
-                    
-                    var xPos = e.page.x + this.options.offsets.x;
-                    var parentPos = el.getPosition().x + el.getSize().x;
-
-                    if ((this.menu.getSize().x + xPos) > parentPos)
-                    {
-                    	this.menu.setStyle('left', parentPos - this.menu.getSize().x - this.options.offsets.x - 10);
-                    }
-                    else
-                    {
-                    	this.menu.setStyle('left', xPos);
-                    }
-                                        
-                    this.menu.setStyles({
-                        top: (e.page.y + this.options.offsets.y),                       
-                        position: 'absolute',
-                        'z-index': '2000'
-                    });
-                    //show the menu
-                    this.show();
-                }
-            }.bind(this));
-        },this);
+        }.bind(this));
 
         //hide on body click
         document.id(document.body).addEvent('click', function() {
@@ -124,6 +69,7 @@ BackendImprovedContextMenu = new Class(
     		});
         }.bind(this));
     },
+    
     
     /**
      * 
@@ -149,6 +95,78 @@ BackendImprovedContextMenu = new Class(
 	    if(id != undefined) ul.setProperty('id', id);
 	    ul.addClass('beit_contextMenu');
 	    return ul;
+	},
+	
+	/**
+	 * 
+	 */
+	handleTarget : function(el)
+	{
+		// hide buttons
+    	el.getElements('.tl_right_nowrap, .tl_right, .tl_content_right').each(function(operations) {        		
+    		if(operations.getChildren().length < 2)
+    		{
+    			return;
+    		}
+    		
+    		operations.getChildren().each(function(child) {
+    			var href = child.getProperty('href');
+    			
+    			if(href == undefined || !href.test('act=cut'))
+    			{
+    				child.hide();        				
+    			}
+        	});
+        	
+        	var newButton = this.menuButton.clone();	        	
+        	newButton.addEvent('click', function(e) {
+        		e.stopPropagation();
+        		el.fireEvent(this.options.trigger, e);
+        	}.bind(this));
+        	
+        	var space = document.createTextNode(' ');
+        	operations.appendChild(space);
+        	newButton.inject(operations);
+    	}, this);
+    	
+    	
+        /* show the menu */
+        el.addEvent(this.options.trigger, function(e) 
+        {
+            //enabled?
+            if(!this.options.disabled) {
+            	el.addClass('beit_hover');
+            	el.getElement('.beit_ContextMenuToggler').addClass('beit_hover')
+            	
+                //prevent default, if told to
+                if(this.options.stopEvent) { e.stop(); }
+                //record this as the trigger
+                this.options.element = document.id(el);
+                //position the menu
+                
+                this.parseRowNodes(el);
+                
+                var xPos = e.page.x + this.options.offsets.x;
+                var parentPos = el.getPosition().x + el.getSize().x;
+
+                if ((this.menu.getSize().x + xPos) > parentPos)
+                {
+                	this.menu.setStyle('left', parentPos - this.menu.getSize().x - this.options.offsets.x - 10);
+                }
+                else
+                {
+                	this.menu.setStyle('left', xPos);
+                }
+                                    
+                this.menu.setStyles({
+                    top: (e.page.y + this.options.offsets.y),                       
+                    position: 'absolute',
+                    'z-index': '2000'
+                });
+                //show the menu
+                this.show();
+            }
+        }.bind(this));
 	},
 	
 	/**
