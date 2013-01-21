@@ -33,6 +33,16 @@ class BackendImprovedTheme extends Backend
 	
 	
 	/**
+	 * import backend user
+	 */
+	public function __construct()
+	{
+		parent::__construct();
+		$this->import('BackendUser', 'User');
+	}
+	
+	
+	/**
 	 * add stylesheet to the template depending on settings
 	 * 
 	 * @param Template
@@ -95,7 +105,19 @@ class BackendImprovedTheme extends Backend
 	 */
 	public function onLoadDataContainer($strTable)
 	{
-		if(!$this->useImprovedTheme() || !$this->isActiveTable($strTable))
+		if(!$this->useImprovedTheme())
+		{
+			return;
+		}
+
+		// switch to tl_files table
+		if($strTable != 'tl_files' && in_array(Environment::get('script'), array('contao/file.php', 'contao/files.php')))
+		{
+			$strTable = 'tl_files';
+			$this->loadDataContainer('tl_files');
+			$this->User->useImprovedThemeContextMenu = false;
+		}
+		elseif(!$this->isActiveTable($strTable))
 		{
 			return;
 		}
@@ -165,9 +187,15 @@ class BackendImprovedTheme extends Backend
 			$strClass = 'tl_listing tr';
 		}
 		// default class for mode 5 and 6
-		elseif($GLOBALS['TL_DCA'][$strTable]['config']['dataContainer'] == 'Folder' || in_array($GLOBALS['TL_DCA'][$strTable]['list']['sorting']['mode'], array(5, 6)))
+		// use str pos to ensure extensions like cloud-api also work
+		elseif(strpos($GLOBALS['TL_DCA'][$strTable]['config']['dataContainer'], 'Folder') > 0 || in_array($GLOBALS['TL_DCA'][$strTable]['list']['sorting']['mode'], array(5, 6)))
 		{
-			$strClass = 'tl_listing li.tl_file, .tl_listing tr.tl_folder';
+			$strClass = 'tl_listing li.tl_file';
+			
+			if($this->User->useImprovedThemeContextMenu)
+			{
+				$this->addContextMenu('tl_listing li.tl_folder');
+			}
 		}
 		// default class for all other modes
 		else
@@ -293,7 +321,7 @@ class BackendImprovedTheme extends Backend
 	 * @return bool
 	 */
 	public function isActiveTable($strTable)
-	{
+	{		
 		if($this->Input->get('table') != '')
 		{
 			return $strTable == $this->Input->get('table');
@@ -318,7 +346,6 @@ class BackendImprovedTheme extends Backend
 	 */
 	protected function useImprovedTheme()
 	{
-		$this->import('BackendUser', 'User');
 		return $GLOBALS['TL_CONFIG']['forceImprovedTheme'] || $GLOBALS['TL_CONFIG']['requireImprovedTheme'] || $this->User->useImprovedTheme;
 	}
 
