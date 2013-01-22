@@ -253,11 +253,11 @@ class BackendImprovedTheme extends Backend
 			$GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/be_improved_theme/assets/backendImprovedContextMenu.js';
 			
 			$strHide = $this->User->useImprovedThemeContextMenu == '2' ? 'true' : 'false';
-			static::$arrScripts['contextMenu'] = 'var contextMenu = new BackendImprovedContextMenu({hideActions: ' . $strHide . ' }); ' . "\r\n";
-			static::$arrScripts['contextMenuExecute'] = 'contextMenu.execute();' . "\r\n";
+			static::$arrScripts['contextMenu'] = 'var beitContextMenu = new BackendImprovedContextMenu({hideActions: ' . $strHide . ' }); ' . "\r\n";
+			static::$arrScripts['contextMenuExecute'] = 'beitContextMenu.execute();' . "\r\n";
 		}
 		
-		static::$arrScripts['contextMenu'] .= 'contextMenu.addTarget(\'.' . $strClass . '\');' . "\r\n";	
+		static::$arrScripts['contextMenu'] .= 'beitContextMenu.addTarget(\'.' . $strClass . '\');' . "\r\n";	
 	}
 	
 	

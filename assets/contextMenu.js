@@ -16,7 +16,7 @@ provides:
   - ContextMenu
 ...
 */
-var DavidWalshContextMenu = new Class({
+DavidWalshContextMenu = new Class({
 
     //implements
     Implements: [Options,Events],

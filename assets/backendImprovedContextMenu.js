@@ -2,7 +2,7 @@
  * BackendImprovedContextMenu is based on Mootools ContextMenu of David Walsh which is
  * licensed by a MIT style license
  */
-var BackendImprovedContextMenu = new Class(
+BackendImprovedContextMenu = new Class(
 {
     Extends: DavidWalshContextMenu,
 
