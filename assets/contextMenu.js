@@ -30,9 +30,9 @@ DavidWalshContextMenu = new Class({
         targets: 'body',
         trigger: 'contextmenu',
         offsets: { x:0, y:0 },
-        onShow: function(){},
-        onHide: function(){},
-        onClick: function(){},
+        onShow: function(){ return this;},
+        onHide: function(){ return this; },
+        onClick: function(){ return this;},
         fadeSpeed: 200
     },
 
@@ -124,12 +124,11 @@ DavidWalshContextMenu = new Class({
     //hide the menu
     hide: function() {
         if(this.shown)
-        {
+        {        	
             this.fx.start(0);
             this.fireEvent('hide');
             this.shown = false;
-        }
-        return this;
+        }      
     },
 
     //disable an item

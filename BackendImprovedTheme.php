@@ -91,7 +91,7 @@ class BackendImprovedTheme extends Backend
 		if(!empty(static::$arrScripts))
 		{
 			$strGenerated = implode("\r\n", static::$arrScripts);
-			$strContent = preg_replace('/<\/body>/', '<script>document.addEvent(\'domready\', function(e) {' . "\r\n" . $strGenerated . '});</script>\0', $strContent, 1);
+			$strContent = preg_replace('/<\/body>/', '<script>window.addEvent(\'domready\', function(e) {' . "\r\n" . $strGenerated . '});</script>\0', $strContent, 1);
 		}
 		
 		return $strContent;		
@@ -253,8 +253,8 @@ class BackendImprovedTheme extends Backend
 			$GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/be_improved_theme/assets/backendImprovedContextMenu.js';
 			
 			$strHide = $this->User->useImprovedThemeContextMenu == '2' ? 'true' : 'false';
-			static::$arrScripts['contextMenu'] = 'var beitContextMenu = new BackendImprovedContextMenu({hideActions: ' . $strHide . ' }); ' . "\r\n";
-			static::$arrScripts['contextMenuExecute'] = 'beitContextMenu.execute();' . "\r\n";
+			static::$arrScripts['contextMenu'] = 'var beitContextMenu = new BackendImprovedContextMenu({menu: \'beit_contextMenu\', hideActions: ' . $strHide . ' }); ' . "\r\n";
+			static::$arrScripts['contextMenuGenerate'] = 'beitContextMenu.generate();' . "\r\n";
 		}
 		
 		static::$arrScripts['contextMenu'] .= 'beitContextMenu.addTarget(\'.' . $strClass . '\');' . "\r\n";	

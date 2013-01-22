@@ -2,7 +2,7 @@
  * BackendImprovedContextMenu is based on Mootools ContextMenu of David Walsh which is
  * licensed by a MIT style license
  */
-BackendImprovedContextMenu = new Class(
+var BackendImprovedContextMenu = new Class(
 {
     Extends: DavidWalshContextMenu,
 
@@ -33,7 +33,7 @@ BackendImprovedContextMenu = new Class(
 	/**
 	 * get things started 
 	 */
-    execute: function() 
+    generate: function() 
     {
     	this.targets = $$(this.options.targets);
     	
@@ -64,15 +64,11 @@ BackendImprovedContextMenu = new Class(
         
         // fix issue that context menu could overlay click area if it is hidden
         this.addEvent('hide', function() {
-        	this.menu.hide();
+        	this.menu.setStyles({ position:'absolute',top:'-900000px',display:'block' });
         	$$('.beit_hover').each(function(el) {
         		el.removeClass('beit_hover');
     		});
         }.bind(this));
-        
-        this.addEvent('show', function() {
-        	this.menu.show();
-        }.bind(this))
     },
     
     
