@@ -115,7 +115,8 @@ var BackendImprovedContextMenu = new Class(
     			operations.getChildren().each(function(child) {
 	    			var href = child.getProperty('href');
 	    			
-	    			if(href == undefined || !href.test('act=cut'))
+	    			// do not hide past buttons
+	    			if(href == undefined || (!href.test('act=cut') && !child.getElement('img').getProperty('src').test('pasteafter.gif')))
 	    			{
 	    				child.hide();        				
 	    			}
