@@ -45,6 +45,7 @@ $GLOBALS['TL_DCA']['tl_user']['fields']['useImprovedThemeContextMenu'] = array
 (
 	'label'                   => &$GLOBALS['TL_LANG']['tl_user']['useImprovedThemeContextMenu'],
 	'default'                 => 1,
+	'exclude'                 => true,
 	'inputType'               => 'select',
 	'options'				  => array(1, 2),
 	'reference'				  => &$GLOBALS['TL_LANG']['tl_user']['useImprovedThemeContextMenuOptions'],
