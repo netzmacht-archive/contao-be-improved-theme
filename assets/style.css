@@ -85,8 +85,16 @@ ul.level_1 .tl_left {
 	display: block;
 }
 
-#tl_navigation a.navigation {
+#tl_navigation li[class^=easytheme] a {
+	padding: 0 !important;
+}
+
+#tl_navigation li a.navigation {
 	padding-left: 20px !important;
+}
+
+#tl_navigation li[class^=easytheme] a.navigation {
+	padding-left: 0 !important;
 }
 
 #tl_navigation a:hover, #tl_navigation .tl_level_2 > li:hover {
