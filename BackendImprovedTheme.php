@@ -137,9 +137,9 @@ class BackendImprovedTheme extends Backend
 			$strClass = isset($arrConfig['header_class']) ? $arrConfig['header_class'] : 'tl_header';
 			$this->addBackendRowTarget($strClass);
 			
-			if($this->User->useImprovedThemeContextMenu)
+			if($this->User->useImprovedThemeContextMenu > 0)
 			{
-				$this->addContextMenu($strClass);				
+				$this->addContextMenu($strClass);	
 			}
 		}
 
@@ -252,7 +252,8 @@ class BackendImprovedTheme extends Backend
 			$GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/be_improved_theme/assets/contextMenu.js';
 			$GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/be_improved_theme/assets/backendImprovedContextMenu.js';
 			
-			static::$arrScripts['contextMenu'] = 'var contextMenu = new BackendImprovedContextMenu({menu: \'contextmenu\' }); ' . "\r\n";
+			$strHide = $this->User->useImprovedThemeContextMenu == '2' ? 'true' : 'false';
+			static::$arrScripts['contextMenu'] = 'var contextMenu = new BackendImprovedContextMenu({hideActions: ' . $strHide . ' }); ' . "\r\n";
 			static::$arrScripts['contextMenuExecute'] = 'contextMenu.execute();' . "\r\n";
 		}
 		

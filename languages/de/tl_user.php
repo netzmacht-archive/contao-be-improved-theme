@@ -21,5 +21,8 @@ $GLOBALS['TL_LANG']['tl_user']['useImprovedTheme'] = array
 $GLOBALS['TL_LANG']['tl_user']['useImprovedThemeContextMenu'] = array
 (
 	'Context Menü aktivieren', 
-	'Anstatt der Standard-Darstellung werden Aktionen ein Context Menü eingeblendet. Dieses ist per Icon bzw. Rechtsclick erreichbar.'
+	'Aktiviert ein Kontext-Menü für Aktionen. Dieses kann als Ergänzung aktiviert werden oder die Standard-Aktionen ersetzen.'
 );
+
+$GLOBALS['TL_LANG']['tl_user']['useImprovedThemeContextMenuOptions'][1] = 'nur Context Menü verwenden';
+$GLOBALS['TL_LANG']['tl_user']['useImprovedThemeContextMenuOptions'][2] = 'Context Menü ergänzt Standardaktionen';

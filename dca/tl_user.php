@@ -37,7 +37,7 @@ $GLOBALS['TL_DCA']['tl_user']['fields']['useImprovedTheme'] = array
 	'default'                 => 1,
 	'exclude'                 => true,
 	'inputType'               => 'checkbox',
-	'eval'                    => array('submitOnChange' => true, 'tl_class'=>'clr'),
+	'eval'                    => array('submitOnChange' => true, 'tl_class'=>'clr w50'),
 	'sql'                     => "char(1) NOT NULL default ''"
 );
 
@@ -45,7 +45,9 @@ $GLOBALS['TL_DCA']['tl_user']['fields']['useImprovedThemeContextMenu'] = array
 (
 	'label'                   => &$GLOBALS['TL_LANG']['tl_user']['useImprovedThemeContextMenu'],
 	'default'                 => 1,
-	'inputType'               => 'checkbox',
-	'eval'                    => array('tl_class'=>'w50'),
+	'inputType'               => 'select',
+	'options'				  => array(1, 2),
+	'reference'				  => &$GLOBALS['TL_LANG']['tl_user']['useImprovedThemeContextMenuOptions'],
+	'eval'                    => array('includeBlankOption' => true, 'tl_class'=>'w50'),
 	'sql'                     => "char(1) NOT NULL default ''"
 );

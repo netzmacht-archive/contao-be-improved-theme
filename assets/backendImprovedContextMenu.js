@@ -12,6 +12,7 @@ BackendImprovedContextMenu = new Class(
 	initialize:	function(options)
 	{
 		this.options.targets = '';
+		this.options.hideActions = false;
 		
         //set options
         this.setOptions(options);
@@ -103,30 +104,33 @@ BackendImprovedContextMenu = new Class(
 	handleTarget : function(el)
 	{
 		// hide buttons
-    	el.getElements('.tl_right_nowrap, .tl_right, .tl_content_right').each(function(operations) {        		
-    		if(operations.getChildren().length < 2)
+    	el.getElements('.tl_right_nowrap, .tl_right, .tl_content_right').each(function(operations) {       		
+    		if(!this.options.hideActions)
     		{
-    			return;
-    		}
-    		
-    		operations.getChildren().each(function(child) {
-    			var href = child.getProperty('href');
-    			
-    			if(href == undefined || !href.test('act=cut'))
+    			if(operations.getChildren().length < 2)
     			{
-    				child.hide();        				
+    				return;    				
     			}
-        	});
-        	
-        	var newButton = this.menuButton.clone();	        	
-        	newButton.addEvent('click', function(e) {
-        		e.stopPropagation();
-        		el.fireEvent(this.options.trigger, e);
-        	}.bind(this));
-        	
-        	var space = document.createTextNode(' ');
-        	operations.appendChild(space);
-        	newButton.inject(operations);
+    			
+    			operations.getChildren().each(function(child) {
+	    			var href = child.getProperty('href');
+	    			
+	    			if(href == undefined || !href.test('act=cut'))
+	    			{
+	    				child.hide();        				
+	    			}
+	        	});
+	        	
+	        	var newButton = this.menuButton.clone();	        	
+	        	newButton.addEvent('click', function(e) {
+	        		e.stopPropagation();
+	        		el.fireEvent(this.options.trigger, e);
+	        	}.bind(this));
+	        	
+	        	var space = document.createTextNode(' ');
+	        	operations.appendChild(space);
+	        	newButton.inject(operations);    			
+    		}
     	}, this);
     	
     	
@@ -136,7 +140,11 @@ BackendImprovedContextMenu = new Class(
             //enabled?
             if(!this.options.disabled) {
             	el.addClass('beit_hover');
-            	el.getElement('.beit_ContextMenuToggler').addClass('beit_hover')
+            	
+            	if(!this.options.hideActions)
+            	{
+            		el.getElement('.beit_ContextMenuToggler').addClass('beit_hover');            		
+            	}            	
             	
                 //prevent default, if told to
                 if(this.options.stopEvent) { e.stop(); }

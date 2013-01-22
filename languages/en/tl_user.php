@@ -20,6 +20,9 @@ $GLOBALS['TL_LANG']['tl_user']['useImprovedTheme'] = array
 
 $GLOBALS['TL_LANG']['tl_user']['useImprovedThemeContextMenu'] = array
 (
-	'Activate context menü', 
+	'Activate context menu', 
 	'Instead of default icon listing the actions will be placed in a context menu. This is accessible with an icon or right click'
 );
+
+$GLOBALS['TL_LANG']['tl_user']['useImprovedThemeContextMenuOptions'][1] = 'only use context menu';
+$GLOBALS['TL_LANG']['tl_user']['useImprovedThemeContextMenuOptions'][2] = 'use context menu and default actions';
