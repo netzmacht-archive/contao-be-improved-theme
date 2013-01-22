@@ -64,11 +64,15 @@ BackendImprovedContextMenu = new Class(
         
         // fix issue that context menu could overlay click area if it is hidden
         this.addEvent('hide', function() {
-        	this.menu.setStyles({ position:'absolute',top:'-900000px',display:'block' });
+        	this.menu.hide();
         	$$('.beit_hover').each(function(el) {
         		el.removeClass('beit_hover');
     		});
         }.bind(this));
+        
+        this.addEvent('show', function() {
+        	this.menu.show();
+        }.bind(this))
     },
     
     
