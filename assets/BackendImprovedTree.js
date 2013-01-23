@@ -80,7 +80,7 @@ var BackendImprovedTree = new Class(
 		if(!prevent)
 		{
 			this.toggleChildren(target, false, true);
-		}
+		}		
 		
 		var self = this;	
 		target.addEvent('click', function(e) 
