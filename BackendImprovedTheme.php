@@ -14,7 +14,40 @@
 
 
 /**
- * prove class for parseTemplate hook
+ * BackendImprovedTheme handles theme improvements which can depend on the DCA
+ * It supports a new directive in the DCA backend_improved. If no configuration
+ * isset, the default values are used.
+ *  
+ * Followings keysare supported
+ * 
+ * For connecting a row in list/table view with an operation
+ * - decide by which class rows are fetched, default depends on dca mode
+ * 	 $GLOBALS['TL_DCA']['tl_table']['backend_improved']['row_class'] = 'tl_listing li.tl_file';
+ * 
+ * - disable row connecting by setting class to false
+ *   $GLOBALS['TL_DCA']['tl_table']['backend_improved']['row_class'] = false;
+ * 
+ * - which operation will be linked to the row, default is edit
+ *   $GLOBALS['TL_DCA']['tl_table']['backend_improved']['row_operation'] = 'edit'; 
+ * 
+ * - alternative operation if row_operation does not exists, e.g. if button is disabled
+ *   $GLOBALS['TL_DCA']['tl_table']['backend_improved']['row_operation'] = 'show';
+ * 
+ * It is not possible to fetch header icons using the dca, so a callback can be defined to fetch the icons
+ * - $GLOBALS['TL_DCA']['tl_table']['backend_improved']['header_callback'] = array('class', 'method');
+ * 
+ * - Header connecting can be disabled by setting callback to false
+ *   $GLOBALS['TL_DCA']['tl_table']['backend_improved']['header_callback'] = false;
+ * 
+ * By default it is not neccessary to setup a callback. A default routine is used. But then it's possible to
+ * choose the css class which defines the header
+ * $GLOBALS['TL_DCA']['tl_table']['backend_improved']['header_class'] = 'tl_header';
+ *  
+ * Last but not least it is possible to define a tree_class which handles the toggling of the tree. 
+ * - Define the javascript class
+ *   $GLOBALS['TL_DCA']['tl_table']['backend_improved']['tree_class'] = 'BackendImprovedTree';
+ * - Define the corresponding file, if not set it try to find the file in system/modules/be_improved_theme/assets/ClassName.js
+ *   $GLOBALS['TL_DCA']['tl_table']['backend_improved']['tree_file'] = '/system/modules/custom/assets/custom.js';
  */
 class BackendImprovedTheme extends Backend
 {
@@ -23,13 +56,25 @@ class BackendImprovedTheme extends Backend
 	 * store callbacks
 	 * @var array
 	 */
-	protected static $arrCallbacks = array();
+	protected $arrCallbacks = array();
 	
 	/**
 	 * generated output which will be passed to the template
 	 * @var array
 	 */
-	protected static $arrScripts = array();
+	protected $arrScripts = array();
+	
+	/**
+	 * combiner reference, use to collect all javascript files
+	 * @var Combiner
+	 */
+	protected $objCombiner;
+	
+	/**
+	 * singleton
+	 * @var BackendImprovedTheme
+	 */
+	protected static $objInstance;
 	
 	
 	/**
@@ -39,6 +84,26 @@ class BackendImprovedTheme extends Backend
 	{
 		parent::__construct();
 		$this->import('BackendUser', 'User');
+		
+		if($this->objCombiner === null)
+		{
+			$this->objCombiner = new Combiner();
+		}
+	}
+	
+	
+	/**
+	 * singleton get instance
+	 * @return BackendImprovedTheme
+	 */
+	public static function getInstance()
+	{
+		if(static::$objInstance === null)
+		{
+			static::$objInstance = new static;
+		}
+		
+		return static::$objInstance;
 	}
 	
 	
@@ -54,6 +119,7 @@ class BackendImprovedTheme extends Backend
 			return;
 		}
 		
+		$objTemplate->javascripts .= '<script src="' . $this->objCombiner->getCombinedFile() . '"></script>';
 		$objTemplate->stylesheets .= '<link rel="stylesheet" href="system/modules/be_improved_theme/assets/style.css">' . "\r\n";
 	}
 	
@@ -74,7 +140,7 @@ class BackendImprovedTheme extends Backend
 		}
 		
 		// run throw callbacks
-		foreach (static::$arrCallbacks as $callback) 
+		foreach ($this->arrCallbacks as $callback) 
 		{
 			if(is_string($callback))
 			{
@@ -88,9 +154,9 @@ class BackendImprovedTheme extends Backend
 		}
 		
 		// add javascript to the body of the page
-		if(!empty(static::$arrScripts))
+		if(!empty($this->arrScripts))
 		{
-			$strGenerated = implode("\r\n", static::$arrScripts);
+			$strGenerated = implode("\r\n", $this->arrScripts);
 			$strContent = preg_replace('/<\/body>/', '<script>window.addEvent(\'domready\', function(e) {' . "\r\n" . $strGenerated . '});</script>\0', $strContent, 1);
 		}
 		
@@ -125,15 +191,16 @@ class BackendImprovedTheme extends Backend
 		// get config from dca
 		$arrConfig = isset($GLOBALS['TL_DCA'][$strTable]['improved_theme']) ? $GLOBALS['TL_DCA'][$strTable]['improved_theme'] : array();
 		
+		
 		// header callback
 		if(isset($arrConfig['header_callback']) && $arrConfig['header_callback'] !== false)
 		{
-			static::$arrCallbacks[] = $GLOBALS['TL_DCA'][$strTable]['improved_theme']['header_callback'];
+			$this->arrCallbacks[] = $GLOBALS['TL_DCA'][$strTable]['improved_theme']['header_callback'];
 		}
 		// callback can be disabled in the dca
 		elseif ($arrConfig['header_callback'] !== false && in_array($GLOBALS['TL_DCA'][$strTable]['list']['sorting']['mode'], array(3,4))) 
 		{
-			static::$arrCallbacks[] = 'callbackHeaderOperation';
+			$this->arrCallbacks[] = 'callbackHeaderOperation';
 			$strClass = isset($arrConfig['header_class']) ? $arrConfig['header_class'] : 'tl_header';
 			$this->addBackendRowTarget($strClass);
 			
@@ -142,13 +209,9 @@ class BackendImprovedTheme extends Backend
 				$this->addContextMenu($strClass);	
 			}
 		}
-
-		// row operation callback
-		if(isset($arrConfig['row_operation_callback']))
-		{
-			static::$arrCallbacks[] = $arrConfig['row_operation_callback'];
-		}		
-		// support configuration by the dca
+		
+	
+		// row operation connecting
 		if(isset($arrConfig['row_operation']))
 		{
 			$this->addRowOperationClass($strTable, $arrConfig['row_operation']);
@@ -162,24 +225,17 @@ class BackendImprovedTheme extends Backend
 		// fallback option if operation does not exists or user have no access
 		if(isset($arrConfig['row_operation_fallback']))
 		{
-			$this->addRowOperationClass($strTable, $arrConfig['row_operation_fallback']);
+			$this->addRowOperationClass($strTable, $arrConfig['row_operation_fallback'], 'beit_fallback');
 		}
 		elseif (isset($GLOBALS['TL_DCA'][$strTable]['list']['operations']['show']))
 		{
 			$this->addRowOperationClass($strTable, 'show', 'beit_fallback');			
 		}
 		
-		// add extra java script
-		if(isset($arrConfig['javascript']))
-		{
-			$GLOBALS['TL_JAVASCRIPT'][] = $arrConfig['javascript'];
-		}
-		
 		// make customizeable, add every registered row class
 		if(isset($arrConfig['row_class']))
 		{
-			$strClass = $arrConfig['row_class'];
-			
+			$strClass = $arrConfig['row_class'];	
 		}
 		// default class for mode 1
 		elseif(in_array($GLOBALS['TL_DCA'][$strTable]['list']['sorting']['mode'], array(1,2)))
@@ -203,11 +259,21 @@ class BackendImprovedTheme extends Backend
 			$strClass = 'tl_content';
 		}
 		
-		$this->addBackendRowTarget($strClass);
+		if($strClass !== false)
+		{
+			$this->addBackendRowTarget($strClass);			
+		}
 		
 		if($this->User->useImprovedThemeContextMenu)
 		{
 			$this->addContextMenu($strClass);
+		}
+		
+		
+		// tree handling, only dca based
+		if(isset($arrConfig['tree_class']))
+		{
+			$this->addTree($strTable, $arrConfig['tree_class'], isset($arrConfig['tree_file']) ? $arrConfig['tree_file'] : null, $arrConfig['tree_options']);			
 		}
 	}
 
@@ -219,23 +285,24 @@ class BackendImprovedTheme extends Backend
 	 */
 	protected function addBackendRowTarget($strClass)
 	{		
-		if(!static::$arrScripts['backendRowTarget'])
+		if(!$this->arrScripts['backendRowTarget'])
 		{
-			$GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/be_improved_theme/assets/backendRowTarget.js';
+			$this->objCombiner->add('system/modules/be_improved_theme/assets/jStorage.js');
+			$this->objCombiner->add('system/modules/be_improved_theme/assets/BackendImprovedRowTarget.js');
 			
-			$strScript = 'var connector = new BackendRowTarget(); ' . "\r\n";
+			$strScript = 'var connector = new BackendImprovedRowTarget(); ' . "\r\n";
 			$strScript .= 'connector.stopPropagation(\'.tl_listing .tl_left > a, .tl_right_nowrap > a, .tl_right > a,.tl_content_right > a\');' . "\r\n"; 
-			static::$arrScripts['backendRowTarget'] = $strScript;
+			$this->arrScripts['backendRowTarget'] = $strScript;
 		}
 
 		// disable auto generated tips if context menu is activated
 		if($this->User->useImprovedThemeContextMenu)
 		{
-			static::$arrScripts['backendRowTarget'] .= 'connector.connect(\'.' . $strClass . '\', true);' . "\r\n";
+			$this->arrScripts['backendRowTarget'] .= 'connector.connect(\'.' . $strClass . '\', true);' . "\r\n";
 		}
 		else
 		{
-			static::$arrScripts['backendRowTarget'] .= 'connector.connect(\'.' . $strClass . '\');' . "\r\n";
+			$this->arrScripts['backendRowTarget'] .= 'connector.connect(\'.' . $strClass . '\');' . "\r\n";
 		}		
 	}
 	
@@ -247,17 +314,36 @@ class BackendImprovedTheme extends Backend
 	 */
 	protected function addContextMenu($strClass)
 	{
-		if(!static::$arrScripts['contextMenu'])
+		if(!isset($this->arrScripts['contextMenu']))
 		{
-			$GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/be_improved_theme/assets/contextMenu.js';
-			$GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/be_improved_theme/assets/backendImprovedContextMenu.js';
+			$this->objCombiner->add('system/modules/be_improved_theme/assets/ContextMenu.js');
+			$this->objCombiner->add('system/modules/be_improved_theme/assets/BackendImprovedContextMenu.js');
 			
 			$strHide = $this->User->useImprovedThemeContextMenu == '2' ? 'true' : 'false';
-			static::$arrScripts['contextMenu'] = 'var beitContextMenu = new BackendImprovedContextMenu({menu: \'beit_contextMenu\', hideActions: ' . $strHide . ' }); ' . "\r\n";
-			static::$arrScripts['contextMenuGenerate'] = 'beitContextMenu.generate();' . "\r\n";
+			$this->arrScripts['contextMenu'] = 'var beitContextMenu = new BackendImprovedContextMenu({menu: \'beit_contextMenu\', hideActions: ' . $strHide . ' }); ' . "\r\n";
+			$this->arrScripts['contextMenuGenerate'] = 'beitContextMenu.generate();' . "\r\n";
 		}
 		
-		static::$arrScripts['contextMenu'] .= 'beitContextMenu.addTarget(\'.' . $strClass . '\');' . "\r\n";	
+		$this->arrScripts['contextMenu'] .= 'beitContextMenu.addTarget(\'.' . $strClass . '\');' . "\r\n";	
+	}
+	
+	
+	/**
+	 * add tree to the output
+	 * 
+	 * @param string table
+	 * @param string tree javascript class
+	 * @param string assets file
+	 */
+	protected function addTree($strTable, $strTreeClass, $strFile=null)
+	{
+		if(!isset($this->arrScripts['tree']))
+		{
+			$this->objCombiner->add('system/modules/be_improved_theme/assets/BackendImprovedTree.js');			
+		}
+		
+		$this->objCombiner->add($strFile != null ? $strFile : ('system/modules/be_improved_theme/assets/' . $strTreeClass . '.js')); 		
+		$this->arrScripts['tree'] .= 'var ' . $strTable . 'Tree = new ' . $strTreeClass . '({table: \'' . $strTable . '\'})'. "\r\n";
 	}
 	
 	
@@ -289,18 +375,6 @@ class BackendImprovedTheme extends Backend
 			$GLOBALS['TL_DCA'][$strTable]['list']['operations'][$strOperation]['attributes'] .= ' class="' . $strClass . '"';
 		}
 	}
-	
-	
-	/**
-	 * add target to the toggling icon in the file tree
-	 * 
-	 * @var string
-	 * @return string
-	 */
-	protected function callbackFileTreeToggleIcon($strContent)
-	{
-		return preg_replace('/href="([^"]*)do=files&amp;tg([^"]*)"/', '\0 class="beit_target"', $strContent);
-	}
 
 	
 	/**
@@ -321,7 +395,7 @@ class BackendImprovedTheme extends Backend
 	 * @param string
 	 * @return bool
 	 */
-	public function isActiveTable($strTable)
+	protected function isActiveTable($strTable)
 	{		
 		if($this->Input->get('table') != '')
 		{

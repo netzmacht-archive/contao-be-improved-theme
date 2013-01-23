@@ -12,4 +12,4 @@
  * 
  */
 
-$GLOBALS['TL_DCA']['tl_article']['improved_theme']['javascript'] = 'system/modules/be_improved_theme/assets/backendArticleTreeToggler.js';
+$GLOBALS['TL_DCA']['tl_article']['improved_theme']['tree_class'] = 'BackendImprovedArticleTree';

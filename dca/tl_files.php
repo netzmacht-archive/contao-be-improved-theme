@@ -12,5 +12,4 @@
  * 
  */
 
-$GLOBALS['TL_DCA']['tl_files']['improved_theme']['javascript'] = 'system/modules/be_improved_theme/assets/backendFileTreeToggler.js';
-//$GLOBALS['TL_DCA']['tl_files']['improved_theme']['row_operation_callback'] = 'callbackFileTreeToggleIcon';
+$GLOBALS['TL_DCA']['tl_files']['improved_theme']['tree_class'] = 'BackendImprovedFileTree';
