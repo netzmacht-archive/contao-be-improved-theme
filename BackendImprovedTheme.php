@@ -84,11 +84,7 @@ class BackendImprovedTheme extends Backend
 	{
 		parent::__construct();
 		$this->import('BackendUser', 'User');
-		
-		if($this->objCombiner === null)
-		{
-			$this->objCombiner = new Combiner();
-		}
+		$this->objCombiner = new Combiner();
 	}
 	
 	
@@ -112,15 +108,13 @@ class BackendImprovedTheme extends Backend
 	 * 
 	 * @param Template
 	 */
-	public function onParseTemplate (&$objTemplate)
+	public function onParseTemplate ($objTemplate)
 	{
-		if(TL_MODE != 'BE' || !$this->useImprovedTheme() || !in_array($objTemplate->getName(), $GLOBALS['TL_CONFIG']['useBackendImprovedOnTemplates'])) 
+		if(TL_MODE == 'BE' && $this->useImprovedTheme() && in_array($objTemplate->getName(), $GLOBALS['TL_CONFIG']['useBackendImprovedOnTemplates'])) 
 		{
-			return;
+			$objTemplate->javascripts .= '<script src="' . $this->objCombiner->getCombinedFile() . '"></script>';
+			$objTemplate->stylesheets .= '<link rel="stylesheet" href="system/modules/be_improved_theme/assets/style.css">' . "\r\n";
 		}
-		
-		$objTemplate->javascripts .= '<script src="' . $this->objCombiner->getCombinedFile() . '"></script>';
-		$objTemplate->stylesheets .= '<link rel="stylesheet" href="system/modules/be_improved_theme/assets/style.css">' . "\r\n";
 	}
 	
 	
@@ -139,7 +133,7 @@ class BackendImprovedTheme extends Backend
 			return $strContent;
 		}
 		
-		// run throw callbacks
+		// run through registered callbacks
 		foreach ($this->arrCallbacks as $callback) 
 		{
 			if(is_string($callback))
@@ -335,15 +329,17 @@ class BackendImprovedTheme extends Backend
 	 * @param string tree javascript class
 	 * @param string assets file
 	 */
-	protected function addTree($strTable, $strTreeClass, $strFile=null)
+	protected function addTree($strTable, $strTreeClass, $strFile=null, $arrOptions=null)
 	{
 		if(!isset($this->arrScripts['tree']))
 		{
 			$this->objCombiner->add('system/modules/be_improved_theme/assets/BackendImprovedTree.js');			
 		}
 		
+		$arrOptions['table'] = $strTable;
+		
 		$this->objCombiner->add($strFile != null ? $strFile : ('system/modules/be_improved_theme/assets/' . $strTreeClass . '.js')); 		
-		$this->arrScripts['tree'] .= 'var ' . $strTable . 'Tree = new ' . $strTreeClass . '({table: \'' . $strTable . '\'})'. "\r\n";
+		$this->arrScripts['tree'] .= 'var ' . $strTable . 'Tree = new ' . $strTreeClass . '(' . json_encode($arrOptions) . ')'. "\r\n";
 	}
 	
 	
