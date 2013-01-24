@@ -354,7 +354,14 @@ class BackendImprovedTheme extends Backend
 		$arrOptions['table'] = $strTable;
 		
 		if(!isset($arrOptions['toggleIcon'])) {
-			$arrOptions['toggleIcon'] = &$GLOBALS['TL_LANG']['MSC']['toggleAll'];
+			// contao 2.11 support			
+			if(isset($GLOBALS['TL_LANG']['MSC']['toggleNodes']))
+			{
+				$arrOptions['toggleIcon'] = array($GLOBALS['TL_LANG']['MSC']['toggleNodes']);
+			}
+			else {
+				$arrOptions['toggleIcon'] = &$GLOBALS['TL_LANG']['MSC']['toggleAll'];	
+			}			
 		}		 
 		
 		$this->objCombiner->add($strFile != null ? $strFile : ('system/modules/be_improved_theme/assets/' . $strTreeClass . '.js'), $this->intDebug); 		
