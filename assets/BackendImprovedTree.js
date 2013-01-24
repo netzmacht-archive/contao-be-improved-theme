@@ -14,6 +14,7 @@ var BackendImprovedTree = new Class(
 		storageKey: 'beit',
 		table: 'default',
 		toggleOnStart: true,
+		toggleIcon: ['', ''],
 		targets: [],
 	},
 	
@@ -31,6 +32,29 @@ var BackendImprovedTree = new Class(
 		if(this.targets.length > 0)
 		{
 			this.startToggler();
+			
+			var a = new Element('a');
+			var top = $$('.tl_folder_top .tl_right')[0];
+			var img = new Element('img').setProperty('src', 'system/themes/' + Contao.theme + '/images/folPlus.gif');
+
+			a.set('text', this.options.toggleIcon[0]);
+			a.set('title', this.options.toggleIcon[1]);
+			img.inject(a);
+			
+			if(top.getChildren().length > 0)
+			{
+				var space = document.createTextNode(' ');
+				top.appendText(' ', 'top');
+				a.inject(top, 'top');
+			}
+			else{
+				a.inject(top);
+			}
+
+			a.addEvent('click', function(e) {
+				e.stopPropagation();
+				this.toggleIcon();				
+			}.bind(this));
 		}
 	},
 	
@@ -96,7 +120,7 @@ var BackendImprovedTree = new Class(
 	 * @param Event
 	 * @param fetch from storage
 	 */
-	toggleChildren: function(el, e, storage)
+	toggleChildren: function(el, e, storage, value)
 	{
 		if(e) {
 			e.stopPropagation();
@@ -104,7 +128,7 @@ var BackendImprovedTree = new Class(
 
 		if(el.length > 1) {
 			el.each(function(child) {
-				this.toggleChildren(child, e, storage);				
+				this.toggleChildren(child, e, storage, value);				
 			}.bind(this));
 		}
 		else if(storage && this.options.enableStorage)
@@ -125,11 +149,23 @@ var BackendImprovedTree = new Class(
 		
 		elements.each(function(element) 
 		{
-			element.toggleClass('beit_hidden');
+			if(value != undefined)
+			{
+				if(value) {
+					element.addClass('beit_hidden');
+				}
+				else {
+					element.removeClass('beit_hidden');
+				}
+			}
+			else
+			{
+				element.toggleClass('beit_hidden');				
+			}			
 			state = element.hasClass('beit_hidden');
 		});
-		
-		if(!storage && this.options.enableStorage && state != undefined)
+
+		if(this.options.enableStorage && state != undefined)
 		{
 			var node = this.getNodeId(el);
 
@@ -138,6 +174,16 @@ var BackendImprovedTree = new Class(
 				$.jStorage.set(this.options.storageKey + node, state);
 			}
 		}
+	},
+	
+	
+	/**
+	 * Toggle Icon handler
+	 * @param Event
+	 */
+	toggleIcon: function()
+	{		
+		this.toggleChildren(this.targets, false, false, $$('.beit_hidden').length == 0);
 	},
 	
 	
@@ -156,7 +202,7 @@ var BackendImprovedTree = new Class(
 		for(var i=0; i < z.length; i++)
 		{
 			href = z[i].getProperty('href');
-			node = href.match('node=([^&]*)');
+			node = new String(href).match('node=([^&]*)');
 			
 			if(node != undefined)
 			{

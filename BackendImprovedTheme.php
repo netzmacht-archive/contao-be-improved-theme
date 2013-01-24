@@ -338,6 +338,10 @@ class BackendImprovedTheme extends Backend
 		
 		$arrOptions['table'] = $strTable;
 		
+		if(!isset($arrOptions['toggleIcon'])) {
+			$arrOptions['toggleIcon'] = &$GLOBALS['TL_LANG']['MSC']['toggleAll'];
+		}		 
+		
 		$this->objCombiner->add($strFile != null ? $strFile : ('system/modules/be_improved_theme/assets/' . $strTreeClass . '.js')); 		
 		$this->arrScripts['tree'] .= 'var ' . $strTable . 'Tree = new ' . $strTreeClass . '(' . json_encode($arrOptions) . ')'. "\r\n";
 	}

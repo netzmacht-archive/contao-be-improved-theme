@@ -7,7 +7,8 @@
 var BackendImprovedFileTree = new Class({
 	
 	Extends: BackendImprovedTree,
-	
+
+
 	/**
 	 * initialization set options
 	 */
@@ -165,5 +166,20 @@ var BackendImprovedFileTree = new Class({
 		}
 		
 		return 0;		
-	}
+	},
+	
+	
+	/**
+	 * Toggle Icon handler
+	 * @param Event
+	 */
+	toggleIcon: function()
+	{
+		var elements = $$('.beit_hidden');
+		
+		this.targets.each(function(target) {
+			this.toggleChildren(target, false, false, elements.length == 0);	
+		}.bind(this));
+	},
+	
 });
