@@ -70,6 +70,8 @@ function BackendImprovedRowTarget()
 					addTips(element);
 				}
 			}.bind(this));
+			
+			row = newRows;
 		}.bind(this));
 	}
 	
