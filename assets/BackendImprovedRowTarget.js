@@ -47,7 +47,30 @@ function BackendImprovedRowTarget()
 			{
 				addTips(row[i]);
 			}			
-		}		
+		}
+		
+		// kee track of ajax changes
+		window.addEvent('ajax_change', function(e) {
+			var newRows = $$(target);
+			
+			newRows.each(function(element) 
+			{
+				if(!row.contains(element))
+				{
+					element.addEvent('click', function(e)
+					{
+						var link = this.getElement('.beit_target, .beit_fallback');
+					
+						if(link)
+						{
+							window.location.href = link.getProperty('href');
+						}
+					});
+					
+					addTips(element);
+				}
+			}.bind(this));
+		}.bind(this));
 	}
 	
 	/**
