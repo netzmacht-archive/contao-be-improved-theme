@@ -32,7 +32,7 @@ var BackendImprovedFileTree = new Class({
 		{
 			this.toggleChildren(target, false, true);			
 			
-			target.getChildren().each(function(element) 
+			target.getChildren('.tl_folder_top, .tl_folder').each(function(element) 
 			{
 				if(element.hasClass('tl_folder_top'))
 				{
@@ -54,12 +54,22 @@ var BackendImprovedFileTree = new Class({
 				else
 				{
 					var next = element.getNext();
-					
-					if(next != undefined && next.hasClass('parent')) {
-						element.addEvent('click', function(e) {
-							this.toggleChildren(next.getElement('ul'), e);
-						}.bind(this));
-					}
+					var link = element.getElement('.tl_left > a');
+										
+					element.addEvent('click', function(e) {
+						if(link.getElement('img').getProperty('src').search('folPlus.gif') > 0)
+						{
+							// triggering onclick action does not work, lets fetch code by regex
+							var regex = new RegExp(/AjaxRequest\.toggleFileManager\(([^\'^,]*),\s*\'?([^\'^,]*)\'?,\s*\'?([^\'^,]*)\'?,\s*([^\'^,]*)\)/);
+							var result = regex.exec(link.getProperty('onclick'));
+							
+							Backend.getScrollOffset();
+							return AjaxRequest.toggleFileManager(link, result[2], result[3], result[4]);
+						}
+						else if(next != undefined && next.hasClass('parent')) {
+							this.toggleChildren(next.getElement('ul'), e);	
+						}							
+					}.bind(this));
 				}
 			}.bind(this));
 		}.bind(this));
@@ -86,13 +96,32 @@ var BackendImprovedFileTree = new Class({
 				}
 				
 				// get previous which toggles target
-				var prev = parent.getPrevious();		
+				var prev = parent.getPrevious();
+				console.log(target);
 				if(prev != undefined) 
 				{
 					prev.addEvent('click', function(e) {
 						this.toggleChildren(target, e);
 					}.bind(this));
 				}
+				
+				target.getElements('.tl_folder').each(function(folder) {
+					var link = folder.getElement('.tl_left > a');
+										
+					folder.addEvent('click', function(e) {
+						if(link.getElement('img').getProperty('src').search('folPlus.gif') > 0)
+						{
+							// triggering onclick action does not work, lets fetch code by regex
+							var regex = new RegExp(/AjaxRequest\.toggleFileManager\(([^\'^,]*),\s*\'?([^\'^,]*)\'?,\s*\'?([^\'^,]*)\'?,\s*([^\'^,]*)\)/);
+							var result = regex.exec(link.getProperty('onclick'));
+							
+							Backend.getScrollOffset();
+							return AjaxRequest.toggleFileManager(link, result[2], result[3], result[4]);
+						}						
+					}.bind(this));
+				});
+				
+				
 			}.bind(this));
 			
 			// update targets
