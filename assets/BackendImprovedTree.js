@@ -35,7 +35,7 @@ var BackendImprovedTree = new Class(
 			
 			var a = new Element('a');
 			var top = $$('.tl_folder_top .tl_right')[0];
-			var img = new Element('img').setProperty('src', 'system/themes/' + Contao.theme + '/images/folPlus.gif');
+			var img = new Element('img').setProperty('src', 'system/themes/default/images/folPlus.gif');
 
 			a.set('text', this.options.toggleIcon[0]);
 			a.set('title', this.options.toggleIcon[1]);
