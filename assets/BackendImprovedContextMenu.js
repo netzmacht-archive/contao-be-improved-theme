@@ -6,6 +6,7 @@ var BackendImprovedContextMenu = new Class(
 {
     Extends: DavidWalshContextMenu,
 
+
 	/**
 	 * override initialize because we need to start context menu later
 	 */
@@ -29,6 +30,7 @@ var BackendImprovedContextMenu = new Class(
         //hide the menu
         this.menu.setStyles({ position:'absolute',top:'-900000px',display:'block' });
 	},
+	
 	
 	/**
 	 * get things started 
@@ -73,7 +75,7 @@ var BackendImprovedContextMenu = new Class(
     
     
     /**
-     * 
+     * add another target for context menu
      */
     addTarget: function(target)
     {
@@ -86,9 +88,11 @@ var BackendImprovedContextMenu = new Class(
     		this.options.targets = this.options.targets + ', ' + target;
     	}
     },
-    
+ 
+ 
     /**
 	 * generate empty menu
+	 * @param string id
 	 */
     generateEmptyMenu: function(id) 
     { 
@@ -98,8 +102,10 @@ var BackendImprovedContextMenu = new Class(
 	    return ul;
 	},
 	
+	
 	/**
-	 * 
+	 * handle target of context menu
+	 * @param Element
 	 */
 	handleTarget : function(el)
 	{
@@ -128,9 +134,15 @@ var BackendImprovedContextMenu = new Class(
 	        		el.fireEvent(this.options.trigger, e);
 	        	}.bind(this));
 	        	
-	        	var space = document.createTextNode(' ');
-	        	operations.appendChild(space);
-	        	newButton.inject(operations);    			
+	        	var pos = 'bottom';
+	        	var uri = new URI(window.location.href);
+	        	
+	        	if(uri.getData('mode') != '' && uri.getData('mode') != undefined) {
+	        		pos = 'top';
+	        	}
+
+	        	operations.appendText(' ');
+	        	newButton.inject(operations, pos);    			
     		}
     	}, this);
     	
@@ -178,8 +190,10 @@ var BackendImprovedContextMenu = new Class(
         }.bind(this));
 	},
 	
+	
 	/**
-	 * 
+	 * parse row nodes
+	 * @param Element 
 	 */
 	parseRowNodes: function(row)
 	{
