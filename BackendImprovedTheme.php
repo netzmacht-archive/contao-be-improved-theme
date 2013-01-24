@@ -123,7 +123,11 @@ class BackendImprovedTheme extends Backend
 	{
 		if(TL_MODE == 'BE' && $this->useImprovedTheme() && in_array($objTemplate->getName(), $GLOBALS['TL_CONFIG']['useBackendImprovedOnTemplates'])) 
 		{
-			$objTemplate->javascripts .= '<script src="' . $this->objCombiner->getCombinedFile() . '"></script>';
+			if($this->objCombiner->hasEntries())
+			{
+				$objTemplate->javascripts .= '<script src="' . $this->objCombiner->getCombinedFile() . '"></script>';
+			}
+			
 			$objTemplate->stylesheets .= '<link rel="stylesheet" href="system/modules/be_improved_theme/assets/style.css">' . "\r\n";
 		}
 	}
