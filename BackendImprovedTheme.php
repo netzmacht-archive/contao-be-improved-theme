@@ -65,6 +65,12 @@ class BackendImprovedTheme extends Backend
 	protected $arrScripts = array();
 	
 	/**
+	 * store timestamp if debug mode is enabled
+	 * @var int
+	 */
+	protected $intDebug = null;
+	
+	/**
 	 * combiner reference, use to collect all javascript files
 	 * @var Combiner
 	 */
@@ -85,6 +91,11 @@ class BackendImprovedTheme extends Backend
 		parent::__construct();
 		$this->import('BackendUser', 'User');
 		$this->objCombiner = new Combiner();
+		
+		if($this->Input->get('debug') == 1)
+		{
+			$this->intDebug = time();
+		}
 	}
 	
 	
@@ -281,8 +292,8 @@ class BackendImprovedTheme extends Backend
 	{		
 		if(!$this->arrScripts['backendRowTarget'])
 		{
-			$this->objCombiner->add('system/modules/be_improved_theme/assets/jStorage.js');
-			$this->objCombiner->add('system/modules/be_improved_theme/assets/BackendImprovedRowTarget.js');
+			$this->objCombiner->add('system/modules/be_improved_theme/assets/jStorage.js', $this->intDebug);
+			$this->objCombiner->add('system/modules/be_improved_theme/assets/BackendImprovedRowTarget.js', $this->intDebug);
 			
 			$strScript = 'var connector = new BackendImprovedRowTarget(); ' . "\r\n";
 			$strScript .= 'connector.stopPropagation(\'.tl_listing .tl_left > a, .tl_right_nowrap > a, .tl_right > a,.tl_content_right > a\');' . "\r\n"; 
@@ -310,8 +321,8 @@ class BackendImprovedTheme extends Backend
 	{
 		if(!isset($this->arrScripts['contextMenu']))
 		{
-			$this->objCombiner->add('system/modules/be_improved_theme/assets/ContextMenu.js');
-			$this->objCombiner->add('system/modules/be_improved_theme/assets/BackendImprovedContextMenu.js');
+			$this->objCombiner->add('system/modules/be_improved_theme/assets/ContextMenu.js', $this->intDebug);
+			$this->objCombiner->add('system/modules/be_improved_theme/assets/BackendImprovedContextMenu.js', $this->intDebug);
 			
 			$strHide = $this->User->useImprovedThemeContextMenu == '2' ? 'true' : 'false';
 			$this->arrScripts['contextMenu'] = 'var beitContextMenu = new BackendImprovedContextMenu({menu: \'beit_contextMenu\', hideActions: ' . $strHide . ' }); ' . "\r\n";
@@ -333,7 +344,7 @@ class BackendImprovedTheme extends Backend
 	{
 		if(!isset($this->arrScripts['tree']))
 		{
-			$this->objCombiner->add('system/modules/be_improved_theme/assets/BackendImprovedTree.js');			
+			$this->objCombiner->add('system/modules/be_improved_theme/assets/BackendImprovedTree.js', $this->intDebug);			
 		}
 		
 		$arrOptions['table'] = $strTable;
@@ -342,8 +353,8 @@ class BackendImprovedTheme extends Backend
 			$arrOptions['toggleIcon'] = &$GLOBALS['TL_LANG']['MSC']['toggleAll'];
 		}		 
 		
-		$this->objCombiner->add($strFile != null ? $strFile : ('system/modules/be_improved_theme/assets/' . $strTreeClass . '.js')); 		
-		$this->arrScripts['tree'] .= 'var ' . $strTable . 'Tree = new ' . $strTreeClass . '(' . json_encode($arrOptions) . ')'. "\r\n";
+		$this->objCombiner->add($strFile != null ? $strFile : ('system/modules/be_improved_theme/assets/' . $strTreeClass . '.js'), $this->intDebug); 		
+		$this->arrScripts['tree'] .= 'var ' . $strTable . 'Tree = new ' . $strTreeClass . '(' . json_encode($arrOptions) . ');'. "\r\n";
 	}
 	
 	
