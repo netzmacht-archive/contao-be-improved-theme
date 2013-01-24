@@ -97,7 +97,6 @@ var BackendImprovedFileTree = new Class({
 				
 				// get previous which toggles target
 				var prev = parent.getPrevious();
-				console.log(target);
 				if(prev != undefined) 
 				{
 					prev.addEvent('click', function(e) {
