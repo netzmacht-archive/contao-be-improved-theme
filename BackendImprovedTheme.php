@@ -355,12 +355,12 @@ class BackendImprovedTheme extends Backend
 		
 		if(!isset($arrOptions['toggleIcon'])) {
 			// contao 2.11 support			
-			if(isset($GLOBALS['TL_LANG']['MSC']['toggleNodes']))
+			if(isset($GLOBALS['TL_LANG']['MSC']['toggleAll']))
 			{
-				$arrOptions['toggleIcon'] = array($GLOBALS['TL_LANG']['MSC']['toggleNodes']);
+				$arrOptions['toggleIcon'] = &$GLOBALS['TL_LANG']['MSC']['toggleAll'];
 			}
 			else {
-				$arrOptions['toggleIcon'] = &$GLOBALS['TL_LANG']['MSC']['toggleAll'];	
+				$arrOptions['toggleIcon'] = array($GLOBALS['TL_LANG']['MSC']['toggleNodes']);
 			}			
 		}		 
 		
