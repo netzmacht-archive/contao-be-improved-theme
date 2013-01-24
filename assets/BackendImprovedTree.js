@@ -38,7 +38,11 @@ var BackendImprovedTree = new Class(
 			var img = new Element('img').setProperty('src', 'system/themes/default/images/folPlus.gif');
 
 			a.set('text', this.options.toggleIcon[0]);
-			a.set('title', this.options.toggleIcon[1]);
+			
+			if(this.options.toggleIcon[1] != undefined) {
+				a.set('title', this.options.toggleIcon[1]);	
+			}
+			
 			img.inject(a);
 			
 			if(top.getChildren().length > 0)
