@@ -135,9 +135,8 @@ var BackendImprovedContextMenu = new Class(
 	        	}.bind(this));
 	        	
 	        	var pos = 'bottom';
-	        	var uri = new URI(window.location.href);
 	        	
-	        	if(uri.getData('mode') != '' && uri.getData('mode') != undefined) {
+	        	if($$('.header_clipboard').length > 0) {
 	        		pos = 'top';
 	        	}
 
