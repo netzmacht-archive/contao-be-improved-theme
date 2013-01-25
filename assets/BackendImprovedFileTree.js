@@ -204,17 +204,21 @@ var BackendImprovedFileTree = new Class({
 			return;
 		}
 		
-		toggler = target.getParent().getPrevious();
+		var toggler = target.getParent().getPrevious();
+		var local = toggler.get('text').test(value, 'i');
 		
-		if(found || toggler.get('text').test(value, 'i')) 
+		if(found || local) 
 		{
 			toggler.addClass('beit_search_result');
 			toggler.removeClass('beit_search_hidden');
 			
-			this.getChildren(target).each(function(child) {
-				child.addClass('beit_search_result');
-				child.removeClass('beit_search_hidden');
-			})
+			if(local)
+			{
+				this.getChildren(target).each(function(child) {
+					child.addClass('beit_search_result');
+					child.removeClass('beit_search_hidden');
+				});				
+			}
 		}
 		else
 		{

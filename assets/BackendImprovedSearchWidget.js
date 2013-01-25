@@ -7,7 +7,7 @@ var BackendImprovedSearchWidget = new Class({
 	
 	options: {
 		containerClass : 'beit_search_widget',
-		inputClass: 'beit_search',
+		inputClass: 'beit_search tl_text',
 		resetClass: 'beit_reset',
 		inject: '.tl_folder_top .tl_right',
 		injectPosition: 'after',

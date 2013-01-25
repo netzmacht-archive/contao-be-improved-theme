@@ -118,6 +118,8 @@ var BackendImprovedTree = new Class(
 			$$('.beit_search_hidden').each(function(el) {
 				el.removeClass('beit_search_hidden');
 			});
+			
+			$.jStorage.set(this.options.storageSearchKey, '');
 		}.bind(this));
 		
 
