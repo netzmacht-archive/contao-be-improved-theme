@@ -11,7 +11,10 @@ var BackendImprovedTree = new Class(
 	
 	options: {
 		enableStorage: true,
-		storageKey: 'beit',
+		enableToggling: true,
+		enableSearch: true,
+		storageKey: 'beit:hidden',
+		storageSearchKey: 'beit:search',
 		table: 'default',
 		toggleOnStart: true,
 		toggleIcon: ['', ''],
@@ -27,39 +30,202 @@ var BackendImprovedTree = new Class(
 	{
 		this.setOptions(options);
 		this.targets = $$(this.options.targets);
-		this.options.storageKey = this.options.storageKey + ':' + this.options.table + ':'; 
+		this.options.storageKey = this.options.storageKey + ':' + this.options.table + ':';
+		this.options.storageSearchKey = this.options.storageSearchKey + ':' + this.options.table;
 		
-		if(this.targets.length > 0)
+		if(this.targets.length == 0)
 		{
-			this.startToggler();
+			return;
+		}
+		
+		if(this.options.enableToggling)
+		{
+			this.initializeToggling();
+		}
+		
+		if(this.options.enableSearch)
+		{
+			this.initializeSearch();
+		}
+	},
+	
+	
+	/**
+	 * initialize search filter 
+	 */
+	initializeSearch: function()
+	{
+		var input = new BackendImprovedSearchWidget({ visible: false });
+		var root = document.getElement('.tl_folder_top .tl_right');
+		
+		var a = new Element('a');
+		var img = new Element('img').setProperty('src', 'system/modules/be_improved_theme/assets/search.png');
+		
+		img.inject(a);
+		a.inject(root, 'top');
+		
+		a.addEvent('click', function(e) {
+			e.stopPropagation();
+			root.hide();
+			input.show();
+		});
+		
+		input.addEvent('show', function(e) {
+			input.search(e);
+			root.hide();
+		});
+		
+		input.addEvent('hide', function(e) {
+			root.show();
+		});
+		
+		input.addEvent('click', function(e) {
+			input.hide();
+			e.stopPropagation();
+		});
+		
+		input.addEvent('change', function(e, search) {
+			var value = input.get('value');
 			
-			var a = new Element('a');
-			var top = $$('.tl_folder_top .tl_right')[0];
-			var img = new Element('img').setProperty('src', 'system/themes/default/images/folPlus.gif');
-
-			a.set('text', this.options.toggleIcon[0]);
-			
-			if(this.options.toggleIcon[1] != undefined) {
-				a.set('title', this.options.toggleIcon[1]);	
-			}
-			
-			img.inject(a);
-			
-			if(top.getChildren().length > 0)
+			if(search)
 			{
-				var space = document.createTextNode(' ');
-				top.appendText(' ', 'top');
-				a.inject(top, 'top');
+				this.eachTarget(function(target) {
+					this.searchChildren(target, value);	
+				}.bind(this), true);
 			}
-			else{
-				a.inject(top);
+			else {
+				$$('.beit_search_result').each(function(el) {
+					el.removeClass('beit_search_result');
+				});
+				
+				$$('.beit_search_hidden').each(function(el) {
+					el.removeClass('beit_search_hidden');
+				});
+				
+				value = '';
 			}
+			
+			if(this.options.enableStorage) {
+				$.jStorage.set(this.options.storageSearchKey, value);	
+			}
+		}.bind(this));
+		
+		input.addEvent('hide', function(e) {
+			$$('.beit_search_result').each(function(el) {
+				el.removeClass('beit_search_result');
+			});
+			
+			$$('.beit_search_hidden').each(function(el) {
+				el.removeClass('beit_search_hidden');
+			});
+		}.bind(this));
+		
 
-			a.addEvent('click', function(e) {
-				e.stopPropagation();
-				this.toggleIcon();				
+		// initialize search if storage is set
+		if(this.options.enableStorage && $.jStorage.get(this.options.storageSearchKey) != '') {
+			
+			input.set('value', $.jStorage.get(this.options.storageSearchKey));
+			input.search();
+			input.show();
+		}
+	},
+	
+	/**
+	 * initialize toggling
+	 */
+	initializeToggling: function()
+	{
+		this.startToggler();
+		
+		var a = new Element('a');
+		var top = $$('.tl_folder_top .tl_right')[0];
+		var img = new Element('img').setProperty('src', 'system/themes/default/images/folPlus.gif');
+
+		a.set('text', this.options.toggleIcon[0]);
+		
+		if(this.options.toggleIcon[1] != undefined) {
+			a.set('title', this.options.toggleIcon[1]);	
+		}
+		
+		img.inject(a);
+		
+		if(top.getChildren().length > 0)
+		{
+			var space = document.createTextNode(' ');
+			top.appendText(' ', 'top');
+			a.inject(top, 'top');
+		}
+		else{
+			a.inject(top);
+		}
+
+		a.addEvent('click', function(e) {
+			e.stopPropagation();
+			this.toggleIcon();				
+		}.bind(this));
+	},
+	
+	
+	/**
+	 * walk trough each target, neccessary for suporting FileTree
+	 */
+	eachTarget: function(func, children)
+	{
+		func(this.targets);
+	},
+	
+	
+	/**
+	 * 
+	 */
+	searchChildren: function(element, value, stop)
+	{
+		var found = false;
+		
+		if(element.length > 1)
+		{
+			element.each(function(child) {
+				if(this.searchChildren(child, value)) {
+					found = true;
+				}
 			}.bind(this));
 		}
+		else
+		{
+			var text = element.get('text');
+			
+			if(stop == undefined && !stop) {
+				this.getChildren(element).each(function(child) {
+					if(this.searchChildren(child, value, true)) {
+						found = true;
+					}
+				}.bind(this));
+			}
+
+			if(found || text.test(value, 'i'))
+			{
+				element.addClass('beit_search_result');
+				element.removeClass('beit_search_hidden');
+				
+				this.getChildren(element).each(function(child) {
+					child.addClass('beit_search_result');
+					child.removeClass('beit_search_hidden');
+				});
+				found = true;
+			}
+			else
+			{
+				element.removeClass('beit_search_result');
+				element.addClass('beit_search_hidden');
+				
+				this.getChildren(element).each(function(child) {
+					child.removeClass('beit_search_result');
+					child.addClass('beit_search_hidden');
+				});
+			}
+		}
+		
+		return found;
 	},
 	
 	
@@ -186,8 +352,12 @@ var BackendImprovedTree = new Class(
 	 * @param Event
 	 */
 	toggleIcon: function()
-	{		
-		this.toggleChildren(this.targets, false, false, $$('.beit_hidden').length == 0);
+	{
+		var hide = $$('.beit_hidden').length == 0;
+		
+		this.eachTarget(function(target) {
+			this.toggleChildren(target, false, false, hide);
+		}.bind(this));
 	},
 	
 	

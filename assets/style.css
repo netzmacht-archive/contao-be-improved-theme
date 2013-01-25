@@ -1,6 +1,10 @@
 
-.limit_toggler, .beit_hidden {
+.limit_toggler, .beit_hidden, .beit_search_hidden {
 	display: none;
+}
+
+.beit_search_result, .beit_hidden.beit_search_result {
+	display: block;
 }
 
 .tl_listing .tl_left {
@@ -175,4 +179,27 @@ ul.level_1 .tl_left {
 #beit_contextMenu li:hover
 {
 	background-color: #f0f0f0;
+}
+
+.beit_search 
+{
+	display: block;
+	float: right;
+	width: 200px;
+	margin: -1px 0px -3px;
+}
+
+.beit_search_widget {
+	position: relative;
+}
+
+.beit_reset {
+	position: absolute;
+	right: 6px;
+	top: 5px;
+	opacity: 0.6;	
+}
+
+.beit_reset:hover {
+	opacity: 1;
 }

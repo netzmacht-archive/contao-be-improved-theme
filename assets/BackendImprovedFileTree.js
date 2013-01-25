@@ -132,6 +132,17 @@ var BackendImprovedFileTree = new Class({
 	
 	
 	/**
+	 * walk trough each target
+	 */
+	eachTarget: function(func)
+	{
+		this.targets.each(function(target) {
+			func(target);				
+		});
+	},
+	
+	
+	/**
 	 * get children of element
 	 * @param Element
 	 * @return Array
@@ -143,7 +154,10 @@ var BackendImprovedFileTree = new Class({
 	
 	
 	/**
+	 * get node id of target
 	 * 
+	 * @param Element
+	 * @return string|int
 	 */
 	getNodeId: function(target)
 	{
@@ -170,16 +184,43 @@ var BackendImprovedFileTree = new Class({
 	
 	
 	/**
-	 * Toggle Icon handler
-	 * @param Event
+	 * we need an extra level for search handling in the file tree
+	 * @param target
+	 * @param string 
 	 */
-	toggleIcon: function()
+	searchChildren: function(target, value)
 	{
-		var elements = $$('.beit_hidden');
-		
-		this.targets.each(function(target) {
-			this.toggleChildren(target, false, false, elements.length == 0);	
+		var found = false;
+		target.getChildren().each(function(child) {
+			
+			if(!child.hasClass('tl_folder_top') && this.parent(child, value)) {
+				found = true;
+			}	
 		}.bind(this));
+		
+		// top element, do not handle parent
+		if(target.hasClass('tl_listing'))
+		{
+			return;
+		}
+		
+		toggler = target.getParent().getPrevious();
+		
+		if(found || toggler.get('text').test(value, 'i')) 
+		{
+			toggler.addClass('beit_search_result');
+			toggler.removeClass('beit_search_hidden');
+			
+			this.getChildren(target).each(function(child) {
+				child.addClass('beit_search_result');
+				child.removeClass('beit_search_hidden');
+			})
+		}
+		else
+		{
+			toggler.removeClass('beit_search_result');
+			toggler.addClass('beit_search_hidden');
+		}
 	},
 	
 });

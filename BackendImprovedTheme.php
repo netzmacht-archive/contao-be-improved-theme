@@ -348,6 +348,7 @@ class BackendImprovedTheme extends Backend
 	{
 		if(!isset($this->arrScripts['tree']))
 		{
+			$this->objCombiner->add('system/modules/be_improved_theme/assets/BackendImprovedSearchWidget.js', $this->intDebug);
 			$this->objCombiner->add('system/modules/be_improved_theme/assets/BackendImprovedTree.js', $this->intDebug);			
 		}
 		
