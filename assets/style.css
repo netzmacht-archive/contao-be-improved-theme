@@ -190,12 +190,20 @@
 	background-color: #f0f0f0;
 }
 
+.beit_search_widget {
+	position: absolute;
+	right: 0;
+	top: -3px;
+}
+
 .beit_search 
 {
 	display: block;
-	float: right;
+	position: absolute;
+	right: 0;
 	width: 200px;
-	margin: -1px 0px -3px;
+	margin: 0;
+	height: 16px;
 }
 
 .beit_search_widget {
@@ -205,7 +213,7 @@
 .beit_reset {
 	position: absolute;
 	right: 6px;
-	top: 5px;
+	top: 6px;
 	opacity: 0.6;	
 }
 

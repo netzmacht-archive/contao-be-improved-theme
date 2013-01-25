@@ -54,7 +54,8 @@ var BackendImprovedSearchWidget = new Class({
 		window.addEvent('keydown', function(e) {			
 			if(e.alt && e.key == this.options.accessKey)
 			{
-				this.show();					
+				this.show();
+				this.input.focus();		
 			}
 		}.bind(this));
 		
