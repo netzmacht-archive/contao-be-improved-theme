@@ -141,9 +141,9 @@ var BackendImprovedTree = new Class(
 		
 		var a = new Element('a');
 		var top = $$('.tl_folder_top .tl_right')[0];
-		var img = new Element('img').setProperty('src', 'system/themes/default/images/folPlus.gif');
+		var img = new Element('img').setProperty('src', 'system/modules/be_improved_theme/assets/toggle.png');
 
-		a.set('text', this.options.toggleIcon[0]);
+		a.set('text', this.options.toggleIcon[0] + ' ');
 		
 		if(this.options.toggleIcon[1] != undefined) {
 			a.set('title', this.options.toggleIcon[1]);	

@@ -40,6 +40,14 @@ function BackendImprovedRowTarget()
 			}
 		});
 		
+		// wrap image only with a span
+		document.getElements('.tl_listing li > .tl_right > img').each(function(el) {
+			console.log(el);
+			var span = new Element('span');
+			span.inject(el, 'before');
+			el.inject(span);
+		});
+		
 		// add tips to the row
 		if(disableTips == undefined || !disableTips)
 		{

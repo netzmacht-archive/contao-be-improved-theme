@@ -7,12 +7,19 @@
 	display: block;
 }
 
-.tl_listing .tl_left {
-	width: 417px;
+.comment_wrap
+{
+	width: auto;
 }
 
-ul.level_1 .tl_left {
-	width: 397px;
+.tl_listing.tl_tree li, .tl_listing tr {
+	position: relative;
+}
+
+.tl_listing .tl_right {
+	position: absolute;
+	right: 6px;
+	top: 3px;	
 }
 
 .tl_header,
@@ -25,15 +32,15 @@ ul.level_1 .tl_left {
 }
 
 .tl_listing li, 
-.tl_listing th, 
-.tl_listing td, 
+.tl_listing th,
 .tl_content_header, 
 .tl_content {
 	padding: 6px;
+	position: relative;
 }
 
 .tl_listing li > .tl_right a, 
-.tl_listing li > .tl_right > img,
+.tl_listing li > .tl_right > span,
 .tl_listing td.tl_right_nowrap a, 
 .tl_content_header a,
 .tl_content_right a,
@@ -42,13 +49,16 @@ ul.level_1 .tl_left {
 	opacity: 0.2;
 	background: #fff;
 	border: 1px solid #E9E9E9;
-	padding: 3px;
-	border-radius: 3px;
-	margin: -1px;
+	padding: 2px;
+	border-radius: 3px;    
+    display: inline-block;
+    height: 16px;    
+    min-width: 16px;
+    text-align: center;
 }
 
 .tl_listing li:hover > .tl_right > a,
-.tl_listing li:hover > .tl_right > img,
+.tl_listing li:hover > .tl_right > span,
 .tl_listing tr:hover td.tl_right_nowrap a, 
 .tl_content_header:hover .tl_content_right a, 
 .tl_header:hover a,
@@ -62,9 +72,8 @@ ul.level_1 .tl_left {
 	opacity: 1;
 	background: #fff;
 	border: 1px solid #E9E9E9;
-	padding: 3px;
+	padding: 2px;
 	border-radius: 3px;
-	margin: -1px;
 }
 
 .tl_listing li:hover > .tl_right > img, 
