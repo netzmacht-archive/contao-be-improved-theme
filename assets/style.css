@@ -76,6 +76,18 @@
 	border-radius: 3px;
 }
 
+.tl_listing li > .tl_right > a.beit_empty {
+	border: 0;
+	padding: 3px;
+	background: transparent;
+}
+
+.tl_listing li:hover > .tl_right > a.beit_empty:hover {
+	border: 0;
+	padding: 3px;
+	background: transparent;
+}
+
 .tl_listing li:hover > .tl_right > img, 
 .tl_listing li > .tl_right > img {
 	padding-bottom: 1px;

@@ -55,7 +55,6 @@ var BackendImprovedSearchWidget = new Class({
 			if(e.alt && e.key == this.options.accessKey)
 			{
 				this.show();
-				this.input.focus();		
 			}
 		}.bind(this));
 		
@@ -82,6 +81,7 @@ var BackendImprovedSearchWidget = new Class({
 	{
 		this.shown = true;
 		this.container.show();
+		this.input.focus();
 		this.fireEvent('show');
 	},
 	

@@ -62,6 +62,7 @@ var BackendImprovedTree = new Class(
 		var img = new Element('img').setProperty('src', 'system/modules/be_improved_theme/assets/search.png');
 		
 		img.inject(a);
+		root.appendText(' ', 'top');
 		a.inject(root, 'top');
 		
 		a.addEvent('click', function(e) {
@@ -153,8 +154,6 @@ var BackendImprovedTree = new Class(
 		
 		if(top.getChildren().length > 0)
 		{
-			var space = document.createTextNode(' ');
-			top.appendText(' ', 'top');
 			a.inject(top, 'top');
 		}
 		else{
@@ -276,7 +275,11 @@ var BackendImprovedTree = new Class(
 		if(!prevent)
 		{
 			this.toggleChildren(target, false, true);
-		}		
+		}
+		
+		target.each(function(child) {
+			this.createRowToggleIcon(child);
+		}.bind(this));
 		
 		var self = this;	
 		target.addEvent('click', function(e) 
@@ -388,6 +391,35 @@ var BackendImprovedTree = new Class(
 		}
 		
 		return node;
+	},
+	
+	
+	/**
+	 * 
+	 */
+	createRowToggleIcon: function(target, element)
+	{
+		if(element == undefined)
+		{
+			var right = target.getElement('.tl_right');
+		}
+		else {
+			var right = element.getElement('.tl_right');
+		}
+		var a = new Element('a');
+		var img = new Element('img')
+		
+		if(target != undefined && this.getChildren(target).length > 0)
+		{
+			img.setProperty('src', 'system/modules/be_improved_theme/assets/toggle.png');
+		}
+		else {
+			img.setProperty('src', 'system/modules/be_improved_theme/assets/empty.png');
+			a.addClass('beit_empty');
+		}
+		
+		img.inject(a);
+		a.inject(right);	
 	},
 	
 });

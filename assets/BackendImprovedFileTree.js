@@ -35,30 +35,34 @@ var BackendImprovedFileTree = new Class({
 			
 			target.getChildren('.tl_folder_top, .tl_folder').each(function(element) 
 			{
+				var next = element.getNext();
+				
 				if(element.hasClass('tl_folder_top'))
 				{
-					var next = element.getNext();
-					
 					// FileSelector renders file tree different than normal file tree
 					if(next.hasClass('parent'))
 					{
 						element.addEvent('click', function(e) {
-							this.toggleChildren(next.getElement('ul'), e);
-						}.bind(this));						
+							this.toggleChildren(next.getElement('ul'), e);							
+						}.bind(this));
+						
+						this.createRowToggleIcon(next.getElement('ul'), element);
 					}
 					else {
 						element.addEvent('click', function(e) {
 							this.toggleChildren(target, e);
+							
 						}.bind(this));
+						
+						this.createRowToggleIcon(target, element);
 					}
 				}
 				else
-				{
-					var next = element.getNext();
+				{					
 					var link = element.getElement('.tl_left > a');
 										
 					element.addEvent('click', function(e) {
-						if(link.getElement('img').getProperty('src').search('folPlus.gif') > 0)
+						if(link.getElement('img') != undefined && link.getElement('img').getProperty('src').search('folPlus.gif') > 0)
 						{
 							// triggering onclick action does not work, lets fetch code by regex
 							var regex = new RegExp(/AjaxRequest\.toggleFileManager\(([^\'^,]*),\s*\'?([^\'^,]*)\'?,\s*\'?([^\'^,]*)\'?,\s*([^\'^,]*)\)/);
@@ -68,9 +72,11 @@ var BackendImprovedFileTree = new Class({
 							return AjaxRequest.toggleFileManager(link, result[2], result[3], result[4]);
 						}
 						else if(next != undefined && next.hasClass('parent')) {
-							this.toggleChildren(next.getElement('ul'), e);	
-						}							
+							this.toggleChildren(next.getElement('ul'), e);							
+						}
 					}.bind(this));
+					
+					this.createRowToggleIcon(next.getElement('ul'), element);
 				}
 			}.bind(this));
 		}.bind(this));
