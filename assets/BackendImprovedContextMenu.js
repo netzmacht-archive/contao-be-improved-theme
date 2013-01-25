@@ -29,6 +29,11 @@ var BackendImprovedContextMenu = new Class(
 
         //hide the menu
         this.menu.setStyles({ position:'absolute',top:'-900000px',display:'block' });
+        
+        // kill Contao 2.11 context menu of edit action
+        $$('a.contextmenu').each(function(el) {
+        	el.removeEvents();
+        });
 	},
 	
 	
@@ -70,7 +75,7 @@ var BackendImprovedContextMenu = new Class(
         	$$('.beit_hover').each(function(el) {
         		el.removeClass('beit_hover');
     		});
-        }.bind(this));
+        }.bind(this));        
     },
     
     
@@ -213,6 +218,8 @@ var BackendImprovedContextMenu = new Class(
 			// create copy, so original will not be deleted
 			node = origin.clone();
 			node.show();
+			// remove invisible class for edit header icon of contao
+			node.removeClass('invisible');
 			
 			// handle links
 			node.addEvent('click',function(e) {
