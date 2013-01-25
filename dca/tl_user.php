@@ -12,23 +12,27 @@
  *  
  **/
 
-$GLOBALS['TL_DCA']['tl_user']['subpalettes']['useImprovedTheme'] = 'useImprovedThemeContextMenu';
-$GLOBALS['TL_DCA']['tl_user']['palettes']['__selector__'][] = 'useImprovedTheme';
+$arrPalettes = array('admin', 'custom', 'default', 'extend', 'group', 'login');
 
-$arrPalettes = array('admin', 'custom', 'default', 'extend', 'group');
-if(!$GLOBALS['TL_CONFIG']['forceImprovedTheme'] && !$GLOBALS['TL_CONFIG']['requireImprovedTheme']) 
+// display context menu setting if be improved theme is forced
+if($GLOBALS['TL_CONFIG']['forceImprovedTheme'] || $GLOBALS['TL_CONFIG']['requireImprovedTheme'])
 {
-	// only show font awesome setting in user palette if the font awesome is not forced	
-	// themed can set the required fonnt awesome tag
-	$arrPalettes[] = 'login'; 
+	$strPalette = 'useImprovedThemeContextMenu';
+}
+// use subpalette
+else
+{
+	$GLOBALS['TL_DCA']['tl_user']['subpalettes']['useImprovedTheme'] = 'useImprovedThemeContextMenu';
+	$GLOBALS['TL_DCA']['tl_user']['palettes']['__selector__'][] = 'useImprovedTheme';
+	$strPalette = 'useImprovedTheme';
 }
 
 foreach($arrPalettes as $palette) {
 	$GLOBALS['TL_DCA']['tl_user']['palettes'][$palette] = str_replace (
 		'backendTheme',
-		'backendTheme,useImprovedTheme',
+		'backendTheme,' . $strPalette,
 		$GLOBALS['TL_DCA']['tl_user']['palettes'][$palette]
-	);	
+	);
 }
 
 $GLOBALS['TL_DCA']['tl_user']['fields']['useImprovedTheme'] = array
