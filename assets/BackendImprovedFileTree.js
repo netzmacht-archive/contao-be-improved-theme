@@ -49,7 +49,7 @@ var BackendImprovedFileTree = new Class({
 						this.createRowToggleIcon(next.getElement('ul'), element);
 					}
 					else {
-						element.addEvent('click', function(e) {
+						element.addEvent('click', function(e) {							
 							this.toggleChildren(target, e);
 							
 						}.bind(this));
@@ -72,6 +72,7 @@ var BackendImprovedFileTree = new Class({
 							return AjaxRequest.toggleFileManager(link, result[2], result[3], result[4]);
 						}
 						else if(next != undefined && next.hasClass('parent')) {
+							this.createRowToggleIcon(next.getElement('ul'), element);
 							this.toggleChildren(next.getElement('ul'), e);							
 						}
 					}.bind(this));
@@ -107,15 +108,26 @@ var BackendImprovedFileTree = new Class({
 				if(prev != undefined) 
 				{
 					prev.addEvent('click', function(e) {
+						this.createRowToggleIcon(target, prev);
 						this.toggleChildren(target, e);
 					}.bind(this));
 				}
 				
+				this.createRowToggleIcon(target, prev);
+				
 				target.getElements('.tl_folder').each(function(folder) {
 					var link = folder.getElement('.tl_left > a');
-										
+					var tg = link.getElement('img').getProperty('src');
+					
+					if(tg != undefined && tg.search('fol') > 0)
+					{
+						link.addEvent('click', function(e) {
+							e.stopPropagation();		
+						});
+					}			
+									
 					folder.addEvent('click', function(e) {
-						if(link.getElement('img').getProperty('src').search('folPlus.gif') > 0)
+						if(link.getElement('img').getProperty('src').search('fol') > 0)
 						{
 							// triggering onclick action does not work, lets fetch code by regex
 							var regex = new RegExp(/AjaxRequest\.toggleFileManager\(([^\'^,]*),\s*\'?([^\'^,]*)\'?,\s*\'?([^\'^,]*)\'?,\s*([^\'^,]*)\)/);
@@ -126,8 +138,6 @@ var BackendImprovedFileTree = new Class({
 						}						
 					}.bind(this));
 				});
-				
-				
 			}.bind(this));
 			
 			// update targets

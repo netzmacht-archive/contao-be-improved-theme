@@ -42,9 +42,11 @@ function BackendImprovedRowTarget()
 		
 		// wrap image only with a span
 		document.getElements('.tl_listing li > .tl_right > img').each(function(el) {
-			var span = new Element('span');
-			span.inject(el, 'before');
-			el.inject(span);
+			if(el.isVisible()) {
+				var span = new Element('span');
+				span.inject(el, 'before');
+				el.inject(span);	
+			}
 		});
 		
 		// add tips to the row
