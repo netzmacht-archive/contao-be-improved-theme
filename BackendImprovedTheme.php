@@ -300,7 +300,8 @@ class BackendImprovedTheme extends Backend
 			$this->objCombiner->add('system/modules/be_improved_theme/assets/BackendImprovedRowTarget.js', $this->intDebug);
 			
 			$strScript = 'var connector = new BackendImprovedRowTarget(); ' . "\r\n";
-			$strScript .= 'connector.stopPropagation(\'.tl_listing .tl_left > a, .tl_right_nowrap > a, .tl_right > a,.tl_content_right > a\');' . "\r\n"; 
+			$strScript .= 'connector.stopPropagation(\'.tl_listing .tl_left > a, .tl_right_nowrap > a, .tl_right > a,.tl_content_right > a\');' . "\r\n";
+			$strScript .= 'connector.stopPropagation(\'.limit_toggler\')'; 
 			$this->arrScripts['backendRowTarget'] = $strScript;
 		}
 
