@@ -144,3 +144,12 @@ if(typeof Tips.Contao != 'undefined')
 		}
 	});	
 }
+
+// fix limit toggler to NOT propagate events
+window.addEvent('load', function(e) {
+	$$('.limit_toggler').each(function(element) {
+		element.addEvent('click', function(e) {
+			e.stopPropagation();
+		});
+	});
+})

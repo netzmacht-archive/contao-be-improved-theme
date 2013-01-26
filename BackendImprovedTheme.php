@@ -301,7 +301,6 @@ class BackendImprovedTheme extends Backend
 			
 			$strScript = 'var connector = new BackendImprovedRowTarget(); ' . "\r\n";
 			$strScript .= 'connector.stopPropagation(\'.tl_listing .tl_left > a, .tl_right_nowrap > a, .tl_right > a,.tl_content_right > a\');' . "\r\n";
-			$strScript .= 'connector.stopPropagation(\'.limit_toggler\')'; 
 			$this->arrScripts['backendRowTarget'] = $strScript;
 		}
 
