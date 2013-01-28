@@ -155,7 +155,7 @@ var BackendImprovedContextMenu = new Class(
         el.addEvent(this.options.trigger, function(e) 
         {
             //enabled?
-            if(!this.options.disabled) {
+            if(!this.options.disabled && el.getElement('.beit_ContextMenuToggler') != undefined) {
             	el.addClass('beit_hover');
             	
             	if(!this.options.hideActions)
