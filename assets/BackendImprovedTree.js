@@ -39,6 +39,13 @@ var BackendImprovedTree = new Class(
 			return;
 		}
 		
+		var top = document.getElement('.tl_folder_top .tl_right');
+		
+		if(top.getChildren().length == 0)
+		{
+			top.set('text', '');
+		}
+		
 		if(this.options.enableToggling)
 		{
 			this.initializeToggling();
@@ -138,11 +145,9 @@ var BackendImprovedTree = new Class(
 	 * initialize toggling
 	 */
 	initializeToggling: function()
-	{
-		this.startToggler();
-		
+	{		
 		var a = new Element('a');
-		var top = $$('.tl_folder_top .tl_right')[0];
+		var top = document.getElement('.tl_folder_top .tl_right');
 		var img = new Element('img').setProperty('src', 'system/modules/be_improved_theme/assets/toggle.png');
 
 		a.set('text', this.options.toggleIcon[0] + ' ');
@@ -157,7 +162,7 @@ var BackendImprovedTree = new Class(
 		{
 			a.inject(top, 'top');
 		}
-		else{
+		else{			
 			a.inject(top);
 		}
 
@@ -169,6 +174,8 @@ var BackendImprovedTree = new Class(
 				this.toggleChildren(target, false, false, hide);
 			}.bind(this));	
 		}.bind(this));
+		
+		this.startToggler();
 	},
 	
 	
@@ -403,7 +410,8 @@ var BackendImprovedTree = new Class(
 			
 			img.inject(a);
 			a.addClass('beit_toggle');
-			a.inject(right);	
+			right.appendText(' ');
+			a.inject(right);
 		}
 		else {
 			img = a.getElement('img');			
