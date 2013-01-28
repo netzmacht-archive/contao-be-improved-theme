@@ -240,7 +240,7 @@ class BackendImprovedTheme extends Backend
 		{
 			$this->addRowOperationClass($strTable, 'show', 'beit_fallback');			
 		}
-		
+
 		// make customizeable, add every registered row class
 		if(isset($arrConfig['row_class']))
 		{
@@ -253,7 +253,7 @@ class BackendImprovedTheme extends Backend
 		}
 		// default class for mode 5 and 6
 		// use str pos to ensure extensions like cloud-api also work
-		elseif(strpos($GLOBALS['TL_DCA'][$strTable]['config']['dataContainer'], 'Folder') > 0 || in_array($GLOBALS['TL_DCA'][$strTable]['list']['sorting']['mode'], array(5, 6)))
+		elseif(strpos($GLOBALS['TL_DCA'][$strTable]['config']['dataContainer'], 'Folder') > -1 || in_array($GLOBALS['TL_DCA'][$strTable]['list']['sorting']['mode'], array(5, 6)))
 		{
 			$strClass = 'tl_listing li.tl_file';
 			
