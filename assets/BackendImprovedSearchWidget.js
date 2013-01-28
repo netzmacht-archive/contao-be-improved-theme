@@ -1,5 +1,8 @@
 /**
+ * BackendImprovedSearchWidget implements search input field, used for the BackendImprovedTree view
+ * It provides events for handling search inputs
  * 
+ * @author David Molineus <http://www.netzmacht.de>
  */
 var BackendImprovedSearchWidget = new Class({
 	
@@ -15,8 +18,14 @@ var BackendImprovedSearchWidget = new Class({
 		accessKey: 'w',
 		triggerEvent: 'keyup',
 		stopPropagation: true,
+		visible: true,
 	},
 	
+	
+	/**
+	 * initialization creates required elements and register events 
+	 * @param options
+	 */
 	initialize: function(options)
 	{
 		this.setOptions(options);
@@ -77,6 +86,10 @@ var BackendImprovedSearchWidget = new Class({
 		}
 	},
 	
+	
+	/**
+	 * show the widget and fire show event
+	 */
 	show: function()
 	{
 		this.shown = true;
@@ -85,6 +98,10 @@ var BackendImprovedSearchWidget = new Class({
 		this.fireEvent('show');
 	},
 	
+	
+	/**
+	 * hide the widget an fire hide event
+	 */
 	hide: function()
 	{
 		this.shown = false;
@@ -92,24 +109,44 @@ var BackendImprovedSearchWidget = new Class({
 		this.fireEvent('hide');
 	},
 	
+	
+	/**
+	 * empty search field and fire reset event
+	 */
 	reset: function()
 	{
 		this.set('value', '');
 		this.fireEvent('reset');
 	},
 	
+	
+	/**
+	 * handle search request will fire the change event and set param to true if min length is reached
+	 */
 	search: function(e)
 	{
 		this.fireEvent('change', [e,(this.get('value').length >= this.options.minLength)]);
 	},
 	
+	
+	/**
+	 * delegete get method to input field 
+	 * @param {Object} key
+	 */
 	get: function(key)
 	{
 		return this.input.get(key);
 	},
 
+
+	/**
+	 * delegate set method to input field 
+ 	 * @param {Object} key
+ 	 * @param {Object} value
+	 */
 	set: function(key, value)
 	{
 		this.input.set(key, value);
-	},	
+	},
+	
 });
