@@ -160,7 +160,8 @@ var BackendImprovedTree = new Class(
 		
 		if(top.getChildren().length > 0)
 		{
-			a.inject(top, 'top');
+			top.appendText(' ', 'top');
+			a.inject(top, 'top');			
 		}
 		else{			
 			a.inject(top);
