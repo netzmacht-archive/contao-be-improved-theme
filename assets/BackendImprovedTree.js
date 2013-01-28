@@ -15,6 +15,7 @@ var BackendImprovedTree = new Class(
 		enableSearch: true,
 		storageKey: 'beit:hidden',
 		storageSearchKey: 'beit:search',
+		storagePrefix: '',
 		table: 'default',
 		toggleOnStart: true,
 		toggleIcon: ['', ''],
@@ -30,8 +31,8 @@ var BackendImprovedTree = new Class(
 	{
 		this.setOptions(options);
 		this.targets = $$(this.options.targets);
-		this.options.storageKey = this.options.storageKey + ':' + this.options.table + ':';
-		this.options.storageSearchKey = this.options.storageSearchKey + ':' + this.options.table;
+		this.options.storageKey = this.options.storagePrefix + this.options.storageKey + ':' + this.options.table + ':';
+		this.options.storageSearchKey = this.options.storagePrefix + this.options.storageSearchKey + ':' + this.options.table;
 		
 		if(this.targets.length == 0)
 		{
@@ -125,7 +126,6 @@ var BackendImprovedTree = new Class(
 		
 
 		// initialize search if storage is set
-		console.log($.jStorage.get(this.options.storageSearchKey));
 		if(this.options.enableStorage && $.jStorage.get(this.options.storageSearchKey) != '' && $.jStorage.get(this.options.storageSearchKey) != undefined) {
 			
 			input.set('value', $.jStorage.get(this.options.storageSearchKey));

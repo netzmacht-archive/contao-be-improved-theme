@@ -353,6 +353,7 @@ class BackendImprovedTheme extends Backend
 		}
 		
 		$arrOptions['table'] = $strTable;
+		$arrOptions['storagePrefix'] = $GLOBALS['TL_CONFIG']['websitePath'];
 		
 		if(!isset($arrOptions['toggleIcon'])) {
 			// contao 2.11 support			
