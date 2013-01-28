@@ -1,0 +1,4 @@
+=== Icons === 
+
+Icons toggle.png and search.png are part of the fuge icon set from Yusuke Kamiyamane, licensed under the Creative Commons By 3.0 http://creativecommons.org/licenses/by/3.0/deed.de 
+http://p.yusukekamiyamane.com/icons/search/fugue/
