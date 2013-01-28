@@ -125,7 +125,8 @@ var BackendImprovedTree = new Class(
 		
 
 		// initialize search if storage is set
-		if(this.options.enableStorage && $.jStorage.get(this.options.storageSearchKey) != '') {
+		console.log($.jStorage.get(this.options.storageSearchKey));
+		if(this.options.enableStorage && $.jStorage.get(this.options.storageSearchKey) != '' && $.jStorage.get(this.options.storageSearchKey) != undefined) {
 			
 			input.set('value', $.jStorage.get(this.options.storageSearchKey));
 			input.search();
@@ -162,17 +163,25 @@ var BackendImprovedTree = new Class(
 
 		a.addEvent('click', function(e) {
 			e.stopPropagation();
-			this.toggleIcon();				
+			var hide = $$('.beit_hidden').length == 0;
+		
+			this.eachTarget(function(target) {
+				this.toggleChildren(target, false, false, hide);
+			}.bind(this));	
 		}.bind(this));
 	},
 	
 	
 	/**
 	 * walk trough each target, neccessary for suporting FileTree
+	 * @param function for every target
+	 * @param additional child option for
 	 */
 	eachTarget: function(func, children)
 	{
-		func(this.targets);
+		this.targets.each(function(target) {
+			func(target);
+		});
 	},
 	
 	
@@ -202,28 +211,13 @@ var BackendImprovedTree = new Class(
 					}
 				}.bind(this));
 			}
-
-			if(found || text.test(value, 'i'))
-			{
-				element.addClass('beit_search_result');
-				element.removeClass('beit_search_hidden');
-				
-				this.getChildren(element).each(function(child) {
-					child.addClass('beit_search_result');
-					child.removeClass('beit_search_hidden');
-				});
-				found = true;
-			}
-			else
-			{
-				element.removeClass('beit_search_result');
-				element.addClass('beit_search_hidden');
-				
-				this.getChildren(element).each(function(child) {
-					child.removeClass('beit_search_result');
-					child.addClass('beit_search_hidden');
-				});
-			}
+			
+			found = found || text.test(value, 'i');
+			this.setSearchState(element, found);
+			
+			this.getChildren(element).each(function(child) {
+				this.setSearchState(child, found);
+			}.bind(this));			
 		}
 		
 		return found;
@@ -360,20 +354,6 @@ var BackendImprovedTree = new Class(
 	
 	
 	/**
-	 * Toggle Icon handler
-	 * @param Event
-	 */
-	toggleIcon: function()
-	{
-		var hide = $$('.beit_hidden').length == 0;
-		
-		this.eachTarget(function(target) {
-			this.toggleChildren(target, false, false, hide);
-		}.bind(this));
-	},
-	
-	
-	/**
 	 * get node id for storage purposes
 	 * 
 	 * @param object
@@ -428,9 +408,7 @@ var BackendImprovedTree = new Class(
 		else {
 			img = a.getElement('img');			
 		}
-		
-		console.log(target);
-		
+
 		if(target != undefined && this.getChildren(target).length > 0)
 		{
 			img.setProperty('src', 'system/modules/be_improved_theme/assets/toggle.png');
@@ -439,6 +417,26 @@ var BackendImprovedTree = new Class(
 		else {
 			img.setProperty('src', 'system/modules/be_improved_theme/assets/empty.png');
 			a.addClass('beit_empty');
+		}
+	},
+	
+	
+	/**
+	 * set search state
+	 * @param Element
+	 * @param bool
+	 */
+	setSearchState: function(element, found)
+	{
+		if(found)
+		{
+			element.addClass('beit_search_result');
+			element.removeClass('beit_search_hidden');
+		}
+		else
+		{
+			element.removeClass('beit_search_result');
+			element.addClass('beit_search_hidden');
 		}
 	},
 	

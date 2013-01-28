@@ -58,23 +58,12 @@ var BackendImprovedFileTree = new Class({
 					}
 				}
 				else
-				{					
+				{	
 					var link = element.getElement('.tl_left > a');
-										
-					element.addEvent('click', function(e) {
-						if(link.getElement('img') != undefined && link.getElement('img').getProperty('src').search('folPlus.gif') > 0)
-						{
-							// triggering onclick action does not work, lets fetch code by regex
-							var regex = new RegExp(/AjaxRequest\.toggleFileManager\(([^\'^,]*),\s*\'?([^\'^,]*)\'?,\s*\'?([^\'^,]*)\'?,\s*([^\'^,]*)\)/);
-							var result = regex.exec(link.getProperty('onclick'));
-							
-							Backend.getScrollOffset();
-							return AjaxRequest.toggleFileManager(link, result[2], result[3], result[4]);
-						}
-						else if(next != undefined && next.hasClass('parent')) {
-							this.createRowToggleIcon(next.getElement('ul'), element);
-							this.toggleChildren(next.getElement('ul'), e);							
-						}
+					
+					this.handleAjaxToggleIcon(element, function(e) {
+						this.createRowToggleIcon(next.getElement('ul'), element);
+						this.toggleChildren(next.getElement('ul'), e);
 					}.bind(this));
 					
 					this.createRowToggleIcon(next.getElement('ul'), element);
@@ -116,28 +105,8 @@ var BackendImprovedFileTree = new Class({
 				this.createRowToggleIcon(target, prev);
 				
 				target.getElements('.tl_folder').each(function(folder) {
-					var link = folder.getElement('.tl_left > a');
-					var tg = link.getElement('img').getProperty('src');
-					
-					if(tg != undefined && tg.search('fol') > 0)
-					{
-						link.addEvent('click', function(e) {
-							e.stopPropagation();		
-						});
-					}			
-									
-					folder.addEvent('click', function(e) {
-						if(link.getElement('img').getProperty('src').search('fol') > 0)
-						{
-							// triggering onclick action does not work, lets fetch code by regex
-							var regex = new RegExp(/AjaxRequest\.toggleFileManager\(([^\'^,]*),\s*\'?([^\'^,]*)\'?,\s*\'?([^\'^,]*)\'?,\s*([^\'^,]*)\)/);
-							var result = regex.exec(link.getProperty('onclick'));
-							
-							Backend.getScrollOffset();
-							return AjaxRequest.toggleFileManager(link, result[2], result[3], result[4]);
-						}						
-					}.bind(this));
-				});
+					this.handleAjaxToggleIcon(folder);
+				}.bind(this));
 			}.bind(this));
 			
 			// update targets
@@ -155,6 +124,44 @@ var BackendImprovedFileTree = new Class({
 		this.targets.each(function(target) {
 			func(target);				
 		});
+	},
+	
+	
+	/**
+	 * handle Contao's Ajax Toggle of a row
+	 * @param Elemnet
+	 */
+	handleAjaxToggleIcon: function(folder, func)
+	{
+		var link = folder.getElement('.tl_left > a');
+		
+		if(link == undefined || link.getElement('img') == undefined) {
+			return false;
+		}
+		
+		var tg = link.getElement('img').getProperty('src');
+		
+		if(tg != undefined && tg.search('fol') > 0)
+		{
+			link.addEvent('click', function(e) {
+				e.stopPropagation();		
+			});
+		}
+		
+		// triggering onclick action does not work, lets fetch code by regex
+		folder.addEvent('click', function(e) {
+			if(tg != undefined && tg.search('folPlus.gif') > 0) {
+				var regex = new RegExp(/AjaxRequest\.toggleFileManager\(([^\'^,]*),\s*\'?([^\'^,]*)\'?,\s*\'?([^\'^,]*)\'?,\s*([^\'^,]*)\)/);
+				var result = regex.exec(link.getProperty('onclick'));
+				
+				Backend.getScrollOffset();
+				return AjaxRequest.toggleFileManager(link, result[2], result[3], result[4]);
+			}
+			else if(func != undefined)
+			{
+				func(e);
+			}
+		}.bind(this));
 	},
 	
 	
@@ -223,23 +230,13 @@ var BackendImprovedFileTree = new Class({
 		var toggler = target.getParent().getPrevious();
 		var local = toggler.get('text').test(value, 'i');
 		
-		if(found || local) 
+		this.setSearchState(toggler, found || local);
+		
+		if(local)
 		{
-			toggler.addClass('beit_search_result');
-			toggler.removeClass('beit_search_hidden');
-			
-			if(local)
-			{
-				this.getChildren(target).each(function(child) {
-					child.addClass('beit_search_result');
-					child.removeClass('beit_search_hidden');
-				});				
-			}
-		}
-		else
-		{
-			toggler.removeClass('beit_search_result');
-			toggler.addClass('beit_search_hidden');
+			this.getChildren(target).each(function(child) {
+				this.setSearchState(toggler, true);
+			}.bind(this));				
 		}
 	},
 	
