@@ -61,11 +61,7 @@ var BackendImprovedFileTree = new Class({
 				{	
 					var link = element.getElement('.tl_left > a');
 					
-					this.handleAjaxToggleIcon(element, function(e) {
-						this.createRowToggleIcon(next.getElement('ul'), element);
-						this.toggleChildren(next.getElement('ul'), e);
-					}.bind(this));
-					
+					this.handleAjaxToggleIcon(element, next);					
 					this.createRowToggleIcon(next.getElement('ul'), element);
 				}
 			}.bind(this));
@@ -105,7 +101,7 @@ var BackendImprovedFileTree = new Class({
 				this.createRowToggleIcon(target, prev);
 				
 				target.getElements('.tl_folder').each(function(folder) {
-					this.handleAjaxToggleIcon(folder);
+					this.handleAjaxToggleIcon(folder, prev);
 				}.bind(this));
 			}.bind(this));
 			
@@ -131,7 +127,7 @@ var BackendImprovedFileTree = new Class({
 	 * handle Contao's Ajax Toggle of a row
 	 * @param Elemnet
 	 */
-	handleAjaxToggleIcon: function(folder, func)
+	handleAjaxToggleIcon: function(folder, next)
 	{
 		var link = folder.getElement('.tl_left > a');
 		
@@ -139,9 +135,9 @@ var BackendImprovedFileTree = new Class({
 			return false;
 		}
 		
-		var tg = link.getElement('img').getProperty('src');
+		var tg = link.getElement('img');
 		
-		if(tg != undefined && tg.search('fol') > 0)
+		if(tg != undefined && tg.getProperty('src').search('fol') > 0)
 		{
 			link.addEvent('click', function(e) {
 				e.stopPropagation();		
@@ -150,16 +146,17 @@ var BackendImprovedFileTree = new Class({
 		
 		// triggering onclick action does not work, lets fetch code by regex
 		folder.addEvent('click', function(e) {
-			if(tg != undefined && tg.search('folPlus.gif') > 0) {
+			if(tg != undefined && tg.getProperty('src').search('folPlus.gif') > 0) {
 				var regex = new RegExp(/AjaxRequest\.toggleFileManager\(([^\'^,]*),\s*\'?([^\'^,]*)\'?,\s*\'?([^\'^,]*)\'?,\s*([^\'^,]*)\)/);
 				var result = regex.exec(link.getProperty('onclick'));
 				
 				Backend.getScrollOffset();
 				return AjaxRequest.toggleFileManager(link, result[2], result[3], result[4]);
 			}
-			else if(func != undefined)
+			else if(next != undefined && next.getElement('ul') != undefined)
 			{
-				func(e);
+				this.createRowToggleIcon(next.getElement('ul'), folder);
+				this.toggleChildren(next.getElement('ul'), e);
 			}
 		}.bind(this));
 	},
