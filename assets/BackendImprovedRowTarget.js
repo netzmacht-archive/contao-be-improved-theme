@@ -5,6 +5,7 @@
 function BackendImprovedRowTarget()
 {
 	var self = this;
+	var contextMenu;
 	
 	/**
 	 * prevent that operation themselve propagate the event to the row
@@ -17,6 +18,15 @@ function BackendImprovedRowTarget()
 		{
 			e.stopPropagation();
 		});
+	}
+	
+	/**
+	 * register context menu
+	 * @param ContextMenu
+	 */
+	self.registerContextMenu = function(contextMenu)
+	{
+		self.contextMenu = contextMenu;
 	}
 	
 	
@@ -34,6 +44,11 @@ function BackendImprovedRowTarget()
 		{
 			var link = this.getElement('.beit_target, .beit_fallback');
 		
+			if(self.contextMenu != undefined && self.contextMenu.shown)
+			{
+				self.contextMenu.hide();
+				return;
+			}
 			if(link)
 			{
 				window.location.href = link.getProperty('href');

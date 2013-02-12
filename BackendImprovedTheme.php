@@ -331,6 +331,10 @@ class BackendImprovedTheme extends Backend
 			$strHide = $this->User->useImprovedThemeContextMenu == '2' ? 'false' : 'true';
 			$this->arrScripts['contextMenu'] = 'var beitContextMenu = new BackendImprovedContextMenu({menu: \'beit_contextMenu\', hideActions: ' . $strHide . ' }); ' . "\r\n";
 			$this->arrScripts['contextMenuGenerate'] = 'beitContextMenu.generate();' . "\r\n";
+			
+			if(isset($this->arrScripts['backendRowTarget'])) {
+				$this->arrScripts['contextMenu'] .= 'connector.registerContextMenu(beitContextMenu);' . "\r\n";
+			}			
 		}
 		
 		$this->arrScripts['contextMenu'] .= 'beitContextMenu.addTarget(\'.' . $strClass . '\');' . "\r\n";	
