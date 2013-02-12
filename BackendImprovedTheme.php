@@ -333,7 +333,7 @@ class BackendImprovedTheme extends Backend
 			$this->arrScripts['contextMenu'] = 'var beitContextMenu = new BackendImprovedContextMenu({menu: \'beit_contextMenu\', hideActions: ' . $strHide . ' }); ' . "\r\n";
 			$this->arrScripts['contextMenuGenerate'] = 'beitContextMenu.generate();' . "\r\n";
 			
-			$this->arrScripts['backendRowTargetConnect'] .= 'if(connector != undefined) connector.registerContextMenu(beitContextMenu);' . "\r\n";			
+			$this->arrScripts['contextMenu'] .= 'if(connector != undefined) connector.registerContextMenu(beitContextMenu);' . "\r\n";			
 		}
 		
 		$this->arrScripts['contextMenu'] .= 'beitContextMenu.addTarget(\'.' . $strClass . '\');' . "\r\n";	
