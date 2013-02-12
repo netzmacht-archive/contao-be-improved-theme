@@ -126,7 +126,7 @@ var BackendImprovedContextMenu = new Class(
     			operations.getChildren().each(function(child) {
 	    			var href = child.getProperty('href');
 	    			
-	    			// do not hide past buttons
+	    			// do not hide paste buttons
 	    			if(href == undefined || (!href.test('act=cut') && !child.getElement('img').getProperty('src').test('pasteafter.gif')))
 	    			{
 	    				child.hide();        				
@@ -209,7 +209,7 @@ var BackendImprovedContextMenu = new Class(
 		
 		elements.each(function(origin) {
 			// do not agg toggler itself and disabled icons to context menu
-			if(origin.hasClass('beit_ContextMenuToggler') || origin.get('tag') != 'a') {
+			if(origin.hasClass('beit_ContextMenuToggler') || origin.hasClass('cl_paste') || origin.get('tag') != 'a') {
 				return;
 			}
 			
@@ -236,7 +236,43 @@ var BackendImprovedContextMenu = new Class(
 				title.inject(node);				
 			}
 			
-			node.inject(li);		
+			node.inject(li);
+			
+			if(origin.hasClass('clipboardmenu')) {
+				var sub = origin.getSiblings('.cl_paste');
+				
+				if(sub.length > 0)
+				{
+					var ul = this.generateEmptyMenu();
+					
+					sub.each(function(a) {
+						clone = a.clone();
+						clone.show();
+						clone.removeClass('invisible');
+						
+						var lli = new Element('li');						
+						clone.inject(lli);
+						lli.inject(ul);
+						
+						lli.addEvent('click',function(e) {
+		                if(!lli.hasClass('disabled') && lli.href != undefined) {
+		                    this.fireEvent('click',[lli,e]);
+			            	}
+			          	}.bind(this));
+			          	
+			          	if(lli.getElement('img') != undefined && lli.getElement('img').getProperty('alt') != undefined)
+						{
+							var title = new Element('span');
+						
+							title.set('html', lli.getElement('img').getProperty('alt'));
+							title.inject(lli.getElement('img'), 'after');				
+						}
+					}.bind(this));
+					
+					ul.inject(li);
+				}
+			}
+			
 			li.inject(this.menu);		
 		}, this);
 	},

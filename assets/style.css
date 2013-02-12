@@ -158,7 +158,7 @@
  * 	
  */
 /* Context menu */
-#beit_contextMenu {
+.beit_contextMenu {
 	display:block;
 	position:absolute;
 	z-index:99999999;
@@ -170,42 +170,46 @@
 	border-radius:4px;
 	margin-right:12px;
 }
-.webkit #beit_contextMenu {
+.webkit .beit_contextMenu {
 	padding:4px 6px 2px;
 }
-#beit_contextMenu a {
+.beit_contextMenu a {
 	display:block;
 	padding:3px 0 2px 0;
 	white-space:nowrap;
 }
-#beit_contextMenu img {
+.beit_contextMenu img {
 	vertical-align:top;
 }
-#beit_contextMenu img[width="12"] {
+.beit_contextMenu img[width="12"] {
 	padding-left:1px;
 	padding-right:1px;
 }
 
-#beit_contextMenu span
+.beit_contextMenu span
 {
 	margin-left: 22px;
 }
 
-#beit_contextMenu a img
+.beit_contextMenu a img
 {
 	position: absolute;
 }
 
-#beit_contextMenu li
+.beit_contextMenu li
 {
 	list-style: none;
 	padding: 2px;
 }
 
-#beit_contextMenu li:hover
+.beit_contextMenu li:hover
 {
 	background-color: #f0f0f0;
 }
+
+.beit_contextMenu li > ul{visibility: hidden; position: absolute; left: 150px; margin-top: -10px;}
+
+.beit_contextMenu li:hover> ul{visibility: visible;}
 
 .beit_search_widget {
 	position: absolute;
@@ -238,6 +242,10 @@
 	opacity: 1;
 }
 
+/* fix issues with directentries */
 #tl_navigation .tl_level_3 { padding-left: 44px !important; }
 #tl_navigation .tl_level_3 > li { clear:both; }
+
+/* fix issues with clipboard extension */
+.tl_listing .tl_left { width: 420px; }
 #tl_navigation .tl_level_3 > li > a { float: left; padding: 0 !important; }

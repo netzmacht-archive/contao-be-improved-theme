@@ -165,6 +165,7 @@ class BackendImprovedTheme extends Backend
 		// add javascript to the body of the page
 		if(!empty($this->arrScripts))
 		{
+			ksort($this->arrScripts);
 			$strGenerated = implode("\r\n", $this->arrScripts);
 			$strContent = preg_replace('/<\/body>/', '<script>window.addEvent(\'domready\', function(e) {' . "\r\n" . $strGenerated . '});</script>\0', $strContent, 1);
 		}
@@ -307,11 +308,11 @@ class BackendImprovedTheme extends Backend
 		// disable auto generated tips if context menu is activated
 		if($this->User->useImprovedThemeContextMenu)
 		{
-			$this->arrScripts['backendRowTarget'] .= 'connector.connect(\'.' . $strClass . '\', true);' . "\r\n";
+			$this->arrScripts['backendRowTargetConnect'] .= 'connector.connect(\'.' . $strClass . '\', true);' . "\r\n";
 		}
 		else
 		{
-			$this->arrScripts['backendRowTarget'] .= 'connector.connect(\'.' . $strClass . '\');' . "\r\n";
+			$this->arrScripts['backendRowTargetConnect'] .= 'connector.connect(\'.' . $strClass . '\');' . "\r\n";
 		}		
 	}
 	
@@ -332,9 +333,7 @@ class BackendImprovedTheme extends Backend
 			$this->arrScripts['contextMenu'] = 'var beitContextMenu = new BackendImprovedContextMenu({menu: \'beit_contextMenu\', hideActions: ' . $strHide . ' }); ' . "\r\n";
 			$this->arrScripts['contextMenuGenerate'] = 'beitContextMenu.generate();' . "\r\n";
 			
-			if(isset($this->arrScripts['backendRowTarget'])) {
-				$this->arrScripts['contextMenu'] .= 'connector.registerContextMenu(beitContextMenu);' . "\r\n";
-			}			
+			$this->arrScripts['backendRowTargetConnect'] .= 'if(connector != undefined) connector.registerContextMenu(beitContextMenu);' . "\r\n";			
 		}
 		
 		$this->arrScripts['contextMenu'] .= 'beitContextMenu.addTarget(\'.' . $strClass . '\');' . "\r\n";	
