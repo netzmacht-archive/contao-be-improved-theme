@@ -328,7 +328,7 @@ class BackendImprovedTheme extends Backend
 			$this->objCombiner->add('system/modules/be_improved_theme/assets/ContextMenu.js', $this->intDebug);
 			$this->objCombiner->add('system/modules/be_improved_theme/assets/BackendImprovedContextMenu.js', $this->intDebug);
 			
-			$strHide = $this->User->useImprovedThemeContextMenu == '2' ? 'true' : 'false';
+			$strHide = $this->User->useImprovedThemeContextMenu == '2' ? 'false' : 'true';
 			$this->arrScripts['contextMenu'] = 'var beitContextMenu = new BackendImprovedContextMenu({menu: \'beit_contextMenu\', hideActions: ' . $strHide . ' }); ' . "\r\n";
 			$this->arrScripts['contextMenuGenerate'] = 'beitContextMenu.generate();' . "\r\n";
 		}

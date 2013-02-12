@@ -116,7 +116,7 @@ var BackendImprovedContextMenu = new Class(
 	{
 		// hide buttons
     	el.getElements('.tl_right_nowrap, .tl_right, .tl_content_right').each(function(operations) {       		
-    		if(!this.options.hideActions)
+    		if(this.options.hideActions)
     		{
     			if(operations.getChildren().length < 2)
     			{
@@ -155,10 +155,10 @@ var BackendImprovedContextMenu = new Class(
         el.addEvent(this.options.trigger, function(e) 
         {
             //enabled?
-            if(!this.options.disabled && el.getElement('.beit_ContextMenuToggler') != undefined) {
+            if(!this.options.disabled && (!this.options.hideActions || el.getElement('.beit_ContextMenuToggler') != undefined)) {
             	el.addClass('beit_hover');
             	
-            	if(!this.options.hideActions)
+            	if(this.options.hideActions)
             	{
             		el.getElement('.beit_ContextMenuToggler').addClass('beit_hover');            		
             	}            	
