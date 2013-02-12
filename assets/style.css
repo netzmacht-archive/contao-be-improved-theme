@@ -106,7 +106,7 @@
 }
 
 #tl_navigation a {
-	padding: 3px 6px !important;
+	padding: 1px 6px !important;
 	display: block;
 }
 
@@ -122,7 +122,7 @@
 	padding-left: 0 !important;
 }
 
-#tl_navigation a:hover, #tl_navigation .tl_level_2 > li:hover {
+#tl_navigation a:hover, #tl_navigation .tl_level_2 > li a:hover {
 	background-color: #f0f0f0;
 }
 
@@ -135,7 +135,12 @@
 }
 
 #tl_navigation .tl_level_2 > li {
-	padding: 0 0 0px 24px!important;
+	clear: both;
+}
+
+#tl_navigation .tl_level_2 > li a {
+	padding-left: 44px!important;
+	background-position: 24px center; 	
 }
 
 /* font icon supprt */
@@ -232,3 +237,7 @@
 .beit_reset:hover {
 	opacity: 1;
 }
+
+#tl_navigation .tl_level_3 { padding-left: 44px !important; }
+#tl_navigation .tl_level_3 > li { clear:both; }
+#tl_navigation .tl_level_3 > li > a { float: left; padding: 0 !important; }
