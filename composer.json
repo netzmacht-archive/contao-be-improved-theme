@@ -13,12 +13,13 @@
     "require": {
         "php": ">=5.3",
         "contao/core": ">=3.0",
+        "contao-community-alliance/composer-installer": "*",
         "contao-legacy/setup_extension_hook": ">=1.0.0-RC,<2.0.0-dev"
     },
         "extra":{
             "contao": {
-                "symlinks": {
-                    "contao": "system/modules/be_improved_theme"
+                "sources": {
+                    "": "system/modules/easy_themes"
                 }
             }
         }
