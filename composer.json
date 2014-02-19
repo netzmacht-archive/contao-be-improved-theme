@@ -21,5 +21,12 @@
         "contao/core": ">=2.11.0-beta,<4.0.0-dev",
         "contao-community-alliance/composer-installer": "*",
         "contao-legacy/setup_extension_hook": ">=1.0.0-RC,<2.0.0-dev"
+    },
+    "extra":{
+        "contao": {
+            "sources": {
+                "": "system/modules/easy_themes"
+            }
+        }
     }
 }
