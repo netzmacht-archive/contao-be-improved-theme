@@ -16,6 +16,9 @@
         "contao-community-alliance/composer-installer": "*",
         "contao-legacy/setup_extension_hook": ">=1.0.0-RC,<2.0.0-dev"
     },
+    "autoload": {
+        "classmap": [""]
+    },
         "extra":{
             "contao": {
                 "sources": {
