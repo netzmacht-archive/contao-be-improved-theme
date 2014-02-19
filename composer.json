@@ -1,0 +1,17 @@
+{
+    "name": "eS-IT/be_improved_theme",
+    "type": "contao-module",
+    "description": "be_improved_theme for the contao cms",
+    "keywords": ["contao", "be_improved_theme"],
+    "license": "LGPLv3",
+    "authors": [
+        {
+            "name": "David Molineus",
+            "email": "mail@netzmacht.de"
+        }
+    ],
+    "require": {
+        "php": ">=5.3",
+        "contao/core": ">=3.0"
+    }
+}
