@@ -1,29 +1,30 @@
 {
-    "name": "es-it/be-improved-theme",
-    "type": "contao-module",
-    "description": "be_improved_theme for the contao cms",
-    "keywords": ["contao", "be_improved_theme"],
-    "license": "LGPLv3",
+    "name": "contao-legacy/be_improved_theme",
+    "type": "legacy-contao-module",
+    "description": "Improve Usability of Backend links and elements",
+    "keywords": [
+        "Theme",
+        "Usability",
+        "Improvement",
+        "Lists",
+        "Overview"
+    ],
+    "homepage": "http://www.netzmacht.de",
+    "version": "0.4.0.7005-RC",
+    "time": "2013-02-11T23:00:00+00:00",
+    "license": [
+        "GNU/LGPL"
+    ],
     "authors": [
         {
-            "name": "David Molineus",
-            "email": "mail@netzmacht.de"
+            "name": "netzmacht creative",
+            "homepage": "http://www.netzmacht.de",
+            "role": "lead"
         }
     ],
     "require": {
-        "php": ">=5.3",
-        "contao/core": ">=3.0",
+        "contao/core": ">=2.11.0-beta,<4.0.0-dev",
         "contao-community-alliance/composer-installer": "*",
         "contao-legacy/setup_extension_hook": ">=1.0.0-RC,<2.0.0-dev"
-    },
-    "autoload": {
-        "classmap": [""]
-    },
-        "extra":{
-            "contao": {
-                "sources": {
-                    "": "system/modules/easy_themes"
-                }
-            }
-        }
+    }
 }
