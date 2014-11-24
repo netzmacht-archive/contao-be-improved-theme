@@ -13,9 +13,18 @@
  **/
 
 // define hook
-$GLOBALS['TL_HOOKS']['initializeSystem'][] = array('BackendImprovedTheme', 'onInitializeSystem');
-$GLOBALS['TL_HOOKS']['parseBackendTemplate'][] = array('BackendImprovedTheme', 'onParseBackendTemplate');
-$GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('BackendImprovedTheme', 'onLoadDataContainer');
+$GLOBALS['TL_HOOKS']['initializeSystem'][] = array(
+    'Netzmacht\Contao\BackendImprovedTheme\Theme',
+    'onInitializeSystem'
+);
+$GLOBALS['TL_HOOKS']['parseBackendTemplate'][] = array(
+    'Netzmacht\Contao\BackendImprovedTheme\Theme',
+    'onParseBackendTemplate'
+);
+$GLOBALS['TL_HOOKS']['loadDataContainer'][] = array(
+    'Netzmacht\Contao\BackendImprovedTheme\Theme',
+    'onLoadDataContainer'
+);
 
 // define templates on which improved theme will be used
 $GLOBALS['TL_CONFIG']['useBackendImprovedOnTemplates'] = array('be_main', 'be_files', 'be_picker');

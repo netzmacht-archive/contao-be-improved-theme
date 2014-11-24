@@ -1,0 +1,38 @@
+{
+    "name":"netzmacht/contao-backend-improved-theme",
+    "description":"Extension improves the default backend theme Contao provides.",
+    "keywords":["contao", "backend", "theme", "improvements", "usability"],
+    "type":"contao-module",
+    "license":"LGPL-3.0+",
+    "authors":[
+        {
+            "name":"David Molineus",
+            "email":"mail@netzmacht.de",
+            "homepage":"http://www.netzmacht.de",
+            "role":"Project leader"
+        }
+    ],
+    "require":{
+        "php":">=5.3",
+        "contao/core":">=3.2,<3.5-dev",
+        "contao-community-alliance/composer-plugin":"~2.0"
+    },
+    "autoload":{
+        "psr-0": {
+            "Netzmacht\\Contao\\BackendImprovedTheme": "src/"
+        }
+    },
+    "replace": {
+        "contao-legacy/be_improved_theme": "*"
+    },
+    "extra":{
+        "branch-alias": {
+            "dev-master": "4.2.x-dev"
+        },
+        "contao": {
+            "sources":{
+                "module": "system/modules/be_improved_theme"
+            }
+        }
+    }
+}
