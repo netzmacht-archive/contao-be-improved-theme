@@ -119,7 +119,7 @@ class BackendImprovedTheme extends Backend
 	 * 
 	 * @param Template
 	 */
-	public function onParseTemplate ($objTemplate)
+	public function onInitializeSystem ($objTemplate)
 	{
 		if(TL_MODE == 'BE' && $this->useImprovedTheme() && in_array($objTemplate->getName(), $GLOBALS['TL_CONFIG']['useBackendImprovedOnTemplates'])) 
 		{

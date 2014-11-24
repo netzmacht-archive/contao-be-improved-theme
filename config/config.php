@@ -13,10 +13,9 @@
  **/
 
 // define hook
-$GLOBALS['TL_HOOKS']['parseTemplate'][] = array('BackendImprovedTheme', 'onParseTemplate');
+$GLOBALS['TL_HOOKS']['initializeSystem'][] = array('BackendImprovedTheme', 'onInitializeSystem');
 $GLOBALS['TL_HOOKS']['parseBackendTemplate'][] = array('BackendImprovedTheme', 'onParseBackendTemplate');
 $GLOBALS['TL_HOOKS']['loadDataContainer'][] = array('BackendImprovedTheme', 'onLoadDataContainer');
-$GLOBALS['SETUP_EXT_HOOK']['be_improved_theme'][] = array('BackendImprovedTheme', 'onParseTemplate');
 
 // define templates on which improved theme will be used
 $GLOBALS['TL_CONFIG']['useBackendImprovedOnTemplates'] = array('be_main', 'be_files', 'be_picker');
