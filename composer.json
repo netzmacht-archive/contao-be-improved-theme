@@ -12,6 +12,11 @@
             "role":"Project leader"
         }
     ],
+    "support":{
+        "email":"mail@netzmacht.de",
+        "issues":"https://github.com/netzmacht/contao-be-improved-theme/issues",
+        "source":"https://github.com/netzmacht/contao-be-improved-theme"
+    },
     "require":{
         "php":">=5.3",
         "contao/core":">=3.2,<3.5-dev",
