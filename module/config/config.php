@@ -13,14 +13,16 @@
  **/
 
 // define hook
-$GLOBALS['TL_HOOKS']['initializeSystem'][] = array(
+$GLOBALS['TL_HOOKS']['parseTemplate'][] = array(
     'Netzmacht\Contao\BackendImprovedTheme\Theme',
-    'onInitializeSystem'
+    'onParseTemplate'
 );
+
 $GLOBALS['TL_HOOKS']['parseBackendTemplate'][] = array(
     'Netzmacht\Contao\BackendImprovedTheme\Theme',
     'onParseBackendTemplate'
 );
+
 $GLOBALS['TL_HOOKS']['loadDataContainer'][] = array(
     'Netzmacht\Contao\BackendImprovedTheme\Theme',
     'onLoadDataContainer'

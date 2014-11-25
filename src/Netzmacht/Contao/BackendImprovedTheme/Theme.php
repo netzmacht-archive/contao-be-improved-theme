@@ -51,7 +51,7 @@ namespace Netzmacht\Contao\BackendImprovedTheme;
  * system/modules/be_improved_theme/assets/ClassName.js
  *   $GLOBALS['TL_DCA']['tl_table']['backend_improved']['tree_file'] = '/system/modules/custom/assets/custom.js';
  */
-class Theme extends \Backend
+class Theme
 {
 
     /**
@@ -78,7 +78,7 @@ class Theme extends \Backend
     /**
      * combiner reference, use to collect all javascript files
      *
-     * @var Combiner
+     * @var \Combiner
      */
     protected $objCombiner;
 
@@ -94,11 +94,9 @@ class Theme extends \Backend
      */
     public function __construct()
     {
-        parent::__construct();
-        $this->import('BackendUser', 'User');
-        $this->objCombiner = new Combiner();
+        $this->objCombiner = new \Combiner();
 
-        if ($this->Input->get('debug') == 1) {
+        if (\Input::get('debug') == 1) {
             $this->intDebug = time();
         }
     }
@@ -120,16 +118,22 @@ class Theme extends \Backend
     /**
      * add stylesheet to the template depending on settings
      *
-     * @param Template
+     * @param \Template $objTemplate
      */
-    public function onInitializeSystem()
+    public function onParseTemplate(\Template $objTemplate)
     {
-        if (TL_MODE == 'BE' && $this->useImprovedTheme()) {
-            if ($this->objCombiner->hasEntries()) {
-                $GLOBALS['TL_JAVASCRIPT'][] = '<script src="' . $this->objCombiner->getCombinedFile() . '"></script>';
+        if (TL_MODE == 'BE' && $this->useImprovedTheme() && in_array(
+                $objTemplate->getName(),
+                $GLOBALS['TL_CONFIG']['useBackendImprovedOnTemplates']
+            )
+        )
+        {
+            if($this->objCombiner->hasEntries())
+            {
+                $objTemplate->javascripts .= '<script src="' . $this->objCombiner->getCombinedFile() . '"></script>';
             }
 
-            $GLOBALS['TL_CSS'][] = 'system/modules/be_improved_theme/assets/style.css';
+            $objTemplate->stylesheets .= '<link rel="stylesheet" href="system/modules/be_improved_theme/assets/style.css">' . "\r\n";
         }
     }
 
@@ -155,8 +159,8 @@ class Theme extends \Backend
             if (is_string($callback)) {
                 $strContent = $this->$callback($strContent);
             } else {
-                $this->import($callback[0]);
-                $strContent = $this->$callback[1]($strContent);
+                $callback   = \Controller::importStatic($callback[0]);
+                $strContent = $callback->$callback[1]($strContent);
             }
         }
 
@@ -187,15 +191,17 @@ class Theme extends \Backend
             return;
         }
 
+        $user = \BackendUser::getInstance();
+
         // switch to tl_files table
         if ($strTable != 'tl_files' && in_array(
-                $this->Environment->script,
+                \Environment::get('script'),
                 array('contao/file.php', 'contao/files.php')
             )
         ) {
             $strTable = 'tl_files';
-            $this->loadDataContainer('tl_files');
-            $this->User->useImprovedThemeContextMenu = false;
+            //$this->loadDataContainer('tl_files');
+            $user->useImprovedThemeContextMenu = false;
         } elseif (!$this->isActiveTable($strTable)) {
             return;
         }
@@ -216,10 +222,10 @@ class Theme extends \Backend
         ) {
             $this->arrCallbacks[] = 'callbackHeaderOperation';
             $strClass             = isset($arrConfig['header_class']) ? $arrConfig['header_class'] : 'tl_header';
-            $this->addBackendRowTarget($strClass);
+            $this->addBackendRowTarget($strClass, $user);
 
-            if ($this->User->useImprovedThemeContextMenu > 0) {
-                $this->addContextMenu($strClass);
+            if ($user->useImprovedThemeContextMenu > 0) {
+                $this->addContextMenu($strClass, $user);
             }
         }
 
@@ -254,8 +260,8 @@ class Theme extends \Backend
         ) {
             $strClass = 'tl_listing li.tl_file';
 
-            if ($this->User->useImprovedThemeContextMenu) {
-                $this->addContextMenu('tl_listing li.tl_folder');
+            if ($user->useImprovedThemeContextMenu) {
+                $this->addContextMenu('tl_listing li.tl_folder', $user);
             }
         } // default class for all other modes
         else {
@@ -263,11 +269,11 @@ class Theme extends \Backend
         }
 
         if ($strClass !== false) {
-            $this->addBackendRowTarget($strClass);
+            $this->addBackendRowTarget($strClass, $user);
         }
 
-        if ($this->User->useImprovedThemeContextMenu) {
-            $this->addContextMenu($strClass);
+        if ($user->useImprovedThemeContextMenu) {
+            $this->addContextMenu($strClass, $user);
         }
 
         // tree handling, only dca based
@@ -284,9 +290,13 @@ class Theme extends \Backend
     /**
      * add BackendRowTarget for passed class
      *
-     * @param string
+     * @param $strClass
+     * @param $user
+     *
+     * @throws \Exception
+     * @internal param $string
      */
-    protected function addBackendRowTarget($strClass)
+    protected function addBackendRowTarget($strClass, $user)
     {
         if (!$this->arrScripts['backendRowTarget']) {
             $this->objCombiner->add('system/modules/be_improved_theme/assets/jStorage.js', $this->intDebug);
@@ -301,7 +311,7 @@ class Theme extends \Backend
         }
 
         // disable auto generated tips if context menu is activated
-        if ($this->User->useImprovedThemeContextMenu) {
+        if ($user->useImprovedThemeContextMenu) {
             $this->arrScripts['backendRowTargetConnect'] .= 'connector.connect(\'.' . $strClass . '\', true);' . "\r\n";
         } else {
             $this->arrScripts['backendRowTargetConnect'] .= 'connector.connect(\'.' . $strClass . '\');' . "\r\n";
@@ -312,8 +322,11 @@ class Theme extends \Backend
      * add context menu to generated scripts
      *
      * @param string $strClass
+     * @param        $user
+     *
+     * @throws \Exception
      */
-    protected function addContextMenu($strClass)
+    protected function addContextMenu($strClass, $user)
     {
         if (!isset($this->arrScripts['contextMenu'])) {
             $this->objCombiner->add('system/modules/be_improved_theme/assets/ContextMenu.js', $this->intDebug);
@@ -322,7 +335,7 @@ class Theme extends \Backend
                 $this->intDebug
             );
 
-            $strHide                                 = $this->User->useImprovedThemeContextMenu == '2' ? 'false' : 'true';
+            $strHide                                 = $user->useImprovedThemeContextMenu == '2' ? 'false' : 'true';
             $this->arrScripts['contextMenu']         = 'var beitContextMenu = new BackendImprovedContextMenu({menu: \'beit_contextMenu\', hideActions: ' . $strHide . ' }); ' . "\r\n";
             $this->arrScripts['contextMenuGenerate'] = 'beitContextMenu.generate();' . "\r\n";
 
@@ -340,7 +353,7 @@ class Theme extends \Backend
      * @param string     $strFile      file
      * @param array|null $arrOptions
      *
-     * @throws Exception
+     * @throws \Exception
      */
     protected function addTree($strTable, $strTreeClass, $strFile = null, $arrOptions = null)
     {
@@ -426,11 +439,11 @@ class Theme extends \Backend
      */
     protected function isActiveTable($strTable)
     {
-        if ($this->Input->get('table') != '') {
-            return $strTable == $this->Input->get('table');
+        if (\Input::get('table') != '') {
+            return $strTable == \Input::get('table');
         }
 
-        $strModule = $this->Input->get('do');
+        $strModule = \Input::get('do');
 
         foreach ($GLOBALS['BE_MOD'] as $arrGroup) {
             if (isset($arrGroup[$strModule])) {
@@ -446,6 +459,15 @@ class Theme extends \Backend
      */
     protected function useImprovedTheme()
     {
-        return $GLOBALS['TL_CONFIG']['forceImprovedTheme'] || $GLOBALS['TL_CONFIG']['requireImprovedTheme'] || $this->User->useImprovedTheme;
+        // do not instantiate backend user in install tool
+        if (substr_count(\Environment::get('requestUri'), '/contao/install.php')) {
+            return false;
+        }
+
+        $user = \BackendUser::getInstance();
+
+        return $GLOBALS['TL_CONFIG']['forceImprovedTheme']
+            || $GLOBALS['TL_CONFIG']['requireImprovedTheme']
+            || $user->useImprovedTheme;
     }
 }
